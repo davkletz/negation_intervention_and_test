@@ -2,7 +2,7 @@ import torch
 
 
 
-path  = ""
+path  = "/data/mnedeljkovic/thesis/thesis/code/embeddings"
 
 
 pages = 10000

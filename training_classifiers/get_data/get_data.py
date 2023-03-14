@@ -4,7 +4,7 @@ import numpy as np
 
 first_page = 10000
 #abs_path = "/data/mnedeljkovic/thesis/thesis/code"
-emb_path = f"embeddings/embeddings{first_page}_10000"
+emb_path = f"get_data/embeddings/embeddings{first_page}_10000"
 
 pages = 10000
 

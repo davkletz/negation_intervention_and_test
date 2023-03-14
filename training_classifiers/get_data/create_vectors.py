@@ -303,14 +303,14 @@ with torch.no_grad():
 
     model_name = "roberta-large"
 
-    abs_path = ""
+    abs_path = "/data/mnedeljkovic/thesis/thesis/code"
 
     lower, upper = int(sys.argv[1]), int(sys.argv[2])
 
     total_phrases, total_complex_phrases, total_negations, total_negations_in_dependent_clauses, total_discarded = 0, 0, 0, 0, 0
 
     for first_page in range(lower, upper, 10000):
-        dependency_trees = f"parsed/parsed{first_page}.conll"  # the file with parsed phrases
+        dependency_trees = f"{abs_path}/parsed/parsed{first_page}.conll"  # the file with parsed phrases
 
         embeddings, num_phrases, num_complex_phrases, num_negations, num_negations_in_dependent_clauses, discarded =\
             get_contextual_embeddings(dependency_trees, device)

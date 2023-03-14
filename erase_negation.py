@@ -58,15 +58,22 @@ array_neg = np.stack(list_neg[:size])
 
 
 labs = [0 for k in range(len(array_neg))]
-print(len(labs))
+
 labs.extend([1 for k in range(len(array_pos))])
-print(len(labs))
+print(f"nb labs : {len(labs)}")
 arrays = np.concatenate((array_neg, array_pos), axis=0)
 labs = np.array(labs)
 
+
+
+
+
 X_train, X_test, y_train, y_test = train_test_split(arrays, labs, test_size=0.33, random_state=42, shuffle=True)
 
-
+print(X_train)
+print(y_train)
+print(X_test)
+print(y_test)
 
 
 M =  2000

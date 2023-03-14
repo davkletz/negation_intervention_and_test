@@ -270,7 +270,7 @@ def get_contextual_embeddings(path: str, device):
                 quit()
 
             if negation_found[index][1]:
-                if random.random()<0.9:
+                if random.random()<0.99:
                     continue
 
 

@@ -30,8 +30,8 @@ def get_data():
 
 
     for key in embedds.keys():
-        list_pos.extend(embedds[key][0])
-        list_neg.extend(embedds[key][1])
+        list_pos.extend(embedds[key][1])
+        list_neg.extend(embedds[key][0])
 
     array_pos = np.stack(list_pos)
     array_neg = np.stack(list_neg)
@@ -39,11 +39,3 @@ def get_data():
     return array_neg, array_pos
 
 
-a, b = get_data()
-
-print(a)
-
-print(b)
-
-print(a.shape)
-print(b.shape)

@@ -1,15 +1,13 @@
 import torch
+import numpy as np
 
 
-
-path  = "/data/mnedeljkovic/thesis/thesis/code/embeddings"
-
+first_page = 10000
+#abs_path = "/data/mnedeljkovic/thesis/thesis/code"
+emb_path = f"embeddings/embeddings{first_page}_10000"
 
 pages = 10000
-embedds : dict = torch.load(f"{path}/embeddings{pages}")
 
-print(type(embedds))
-print(embedds.keys())
 
 
 dico_detail = {}
@@ -17,14 +15,26 @@ dico_detail = {}
 tot_p = 0
 tot_n = 0
 
-for key in embedds.keys():
-    nb_p = len(embedds[key][1])
-    nb_n = len(embedds[key][0])
-
-    dico_detail[key] = (nb_p, nb_n)
-    tot_n += nb_n
-    tot_p += nb_p
 
 print(dico_detail)
 
 print(tot_p, tot_n)
+
+
+def get_data():
+    """
+    :return: X_train, Y_train, X_dev, Y_dev
+    """
+    embedds: dict = torch.load(f"emb_path")
+
+    list_pos = []
+    list_neg = []
+
+
+
+    for key in embedds.keys():
+        list_pos.extend(embedds[key][0])
+        list_neg.extend(embedds[key][1])
+
+    array_pos = np.stack(list_pos)
+    array_neg = np.stack(list_neg)

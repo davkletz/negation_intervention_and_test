@@ -15,9 +15,7 @@ tot_p = 0
 tot_n = 0
 
 
-print(dico_detail)
 
-print(tot_p, tot_n)
 
 
 def get_data():
@@ -42,3 +40,10 @@ def get_data():
 
 
 a, b = get_data()
+
+print(a)
+
+print(b)
+
+print(a.shape)
+print(b.shape)

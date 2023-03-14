@@ -162,9 +162,9 @@ def get_debiasing_projection(classifier_class, cls_params: Dict, num_classifiers
     """
 
     P = get_projection_to_intersection_of_nullspaces(rowspace_projections, input_dim)
-    print(f"final_accur : {accuracies}")
+    #print(f"final_accur : {accuracies}")
 
-    return P, rowspace_projections, Ws
+    return P, rowspace_projections, Ws, accuracies
 
 
 if __name__ == '__main__':

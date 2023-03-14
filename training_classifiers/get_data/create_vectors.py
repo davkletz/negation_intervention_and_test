@@ -268,7 +268,7 @@ def get_contextual_embeddings(path: str, device, verb_embs : dict):
                 torch.save(verb_embs, f"embeddings/embeddings{first_page}_10000")
                 quit()
 
-            if negation_found[index][1]:
+            if negation_found[index][1] == 0:
                 if random.random()<0.99:
                     continue
 

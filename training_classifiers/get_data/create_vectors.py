@@ -265,7 +265,7 @@ def get_contextual_embeddings(path: str, device):
             verb_to_add = verb_to_add.detach().cpu()
 
 
-            if len(tot_neg) >= nb_verbs and len(tot_pos) >= nb_verbs:
+            if tot_neg >= nb_verbs and tot_pos >= nb_verbs:
                 torch.save(verb_embs, f"embeddings/embeddings{first_page}_10000")
                 quit()
 
@@ -277,17 +277,21 @@ def get_contextual_embeddings(path: str, device):
 
 
             if negation_found[index][1] == 0:  # negation wasn't found for the verb at position index
+                tot_neg += 1
                 if lemma not in verb_embs:
                     verb_embs[lemma] = [[], [verb_to_add]]
                 else:
                     verb_embs[lemma][1].append(verb_to_add)
             elif negation_found[index][1] >= negation_found[index][0]:  # the number of negations is
                 # bigger than or equal to the number of auxiliaries
+                tot_pos += 1
                 if lemma not in verb_embs:
                     verb_embs[lemma] = [[verb_to_add], []]
                 else:
                     verb_embs[lemma][0].append(verb_to_add)
             else:  # then negations were found but not for every auxiliary, thus we add the tensors to both sides
+                tot_neg += 1
+                tot_pos += 1
                 if lemma not in verb_embs:
                     verb_embs[lemma] = [[verb_to_add], [verb_to_add]]
                 else:

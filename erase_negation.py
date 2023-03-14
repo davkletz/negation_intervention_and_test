@@ -16,6 +16,8 @@ model_name = "roberta-large"
 
 def tsne(vecs, labels, title="", ind2label = None, words = None, metric = "l2"):
 
+  print(vecs.shape)
+
   tsne = TSNE(n_components=2)#, angle = 0.5, perplexity = 20)
   vecs_2d = tsne.fit_transform(vecs)
   #label_names = sorted(list(set(labels.tolist())))

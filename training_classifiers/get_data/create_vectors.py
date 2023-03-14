@@ -200,8 +200,8 @@ def get_contextual_embeddings(path: str, device, verb_embs : dict):
     for phrase in dep_trees:
         # print(phrase)
         num_ph += 1
-        if num_ph % 10000 == 0:
-            print(f"{num_ph} at {datetime.now().strftime('%H:%M:%S')}")
+        if num_ph % 1000 == 0:
+            print(f"{num_ph} at {datetime.now().strftime('%H:%M:%S')}, nb_neg : {tot_neg}, tot_pos : {tot_pos }")
             # print(f"Memory usage: {torch.cuda.memory_allocated(device)}")
             torch.cuda.empty_cache()
 

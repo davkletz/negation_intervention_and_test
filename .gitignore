@@ -152,5 +152,10 @@ cython_debug/
 #.idea/
 
 
+/training_classifiers/get_data/embeddings/
+
+
+.DS_STORE
+
 
 get_data/get_data/embeddings

@@ -4,6 +4,10 @@ from train_classifiers.debias import debias
 
 array_neg, array_pos = get_data()
 
+print(array_neg.shape)
+
+print(array_pos.shape)
+
 
 labs = [0 for k in range(len(array_neg))]
 labs.extend([1 for k in range(len(array_pos))])

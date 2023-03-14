@@ -89,7 +89,7 @@ def stanza_to_bert_tokens(phrase: conllu.models.TokenList, bert_tokenization, to
     return token_map
 
 
-def get_contextual_embeddings(path: str, device):
+def get_contextual_embeddings(path: str, device, verb_embs : dict):
     """
     Input:
     - path: the location of the .conll file containing dependency trees for each phrase of the text we are analysing
@@ -188,7 +188,6 @@ def get_contextual_embeddings(path: str, device):
     # verb_embeddings is a map: lemma of the verb v -> [context_reprs_negated, context_reprs_affirmative]
 
     # we have List[List[torch.Tensor]] since it is possible that some verbs be split into multiple tokens in RoBERTa
-    verb_embs = {}  # Dict[str, [List[torch.Tensor], List[torch.Tensor]]]
 
     num_ph, num_complex_ph, num_neg, num_negations_in_dependent_cl, disc = 0, 0, 0, 0, 0
 
@@ -312,13 +311,24 @@ with torch.no_grad():
     lower, upper = int(sys.argv[1]), int(sys.argv[2])
     nb_verbs = int(sys.argv[3])
 
+    embeddings = {}
+
     total_phrases, total_complex_phrases, total_negations, total_negations_in_dependent_clauses, total_discarded = 0, 0, 0, 0, 0
 
-    for first_page in range(lower, upper, 10000):
+    first_page = 0
+
+
+    while total_negations< nb_verbs :
+
+
         dependency_trees = f"{abs_path}/parsed/parsed{first_page}.conll"  # the file with parsed phrases
 
         embeddings, num_phrases, num_complex_phrases, num_negations, num_negations_in_dependent_clauses, discarded =\
-            get_contextual_embeddings(dependency_trees, device)
+            get_contextual_embeddings(dependency_trees, device, embeddings)
+
+
+        print(f"Total phrases: {total_phrases}")
+        print(f"total_negations: {total_negations}")
 
         total_phrases += num_phrases
         total_complex_phrases += num_complex_phrases
@@ -326,16 +336,11 @@ with torch.no_grad():
         total_negations_in_dependent_clauses += num_negations_in_dependent_clauses
         total_discarded += discarded
 
-        torch.save(embeddings, f"embeddings/embeddings_{first_page}_{nb_verbs}")
+        first_page += 10000
 
-        print(f"Saved from page {first_page}")
 
-        with open(f"wikistats.txt", "a") as file:
-            file.write(f"From page: {first_page}\n")
-            file.write(f"Number of phrases: {total_phrases}\n")
-            file.write(f"Number of complex phases: {total_complex_phrases} ({total_complex_phrases / total_phrases})\n")
-            file.write(f"Number of negated phrases: {total_negations} ({total_negations / total_phrases})\n")
-            file.write(f"Number of negations in dependent clauses: {total_negations_in_dependent_clauses} "
-                       f"({total_negations_in_dependent_clauses / total_negations})")
-            file.write(f"Number of discarded verbs: {total_discarded}\n\n\n")
+    torch.save(embeddings, f"embeddings/embeddings_{first_page}_{nb_verbs}")
+
+
+
 

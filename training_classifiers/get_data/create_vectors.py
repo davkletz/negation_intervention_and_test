@@ -308,8 +308,7 @@ with torch.no_grad():
 
     abs_path = "/data/mnedeljkovic/thesis/thesis/code"
 
-    lower, upper = int(sys.argv[1]), int(sys.argv[2])
-    nb_verbs = int(sys.argv[3])
+    nb_verbs = int(sys.argv[1])
 
     embeddings = {}
 
@@ -319,7 +318,6 @@ with torch.no_grad():
 
 
     while total_negations< nb_verbs :
-
 
         dependency_trees = f"{abs_path}/parsed/parsed{first_page}.conll"  # the file with parsed phrases
 

@@ -303,14 +303,13 @@ def get_contextual_embeddings(path: str, device):
 
 
 with torch.no_grad():
-
+    nb_verbs = 10
 
     model_name = "roberta-large"
 
     abs_path = "/data/mnedeljkovic/thesis/thesis/code"
 
     lower, upper = int(sys.argv[1]), int(sys.argv[2])
-    nb_verbs = int(sys.argv[3])
 
     total_phrases, total_complex_phrases, total_negations, total_negations_in_dependent_clauses, total_discarded = 0, 0, 0, 0, 0
 
@@ -326,7 +325,7 @@ with torch.no_grad():
         total_negations_in_dependent_clauses += num_negations_in_dependent_clauses
         total_discarded += discarded
 
-        torch.save(embeddings, f"embeddings/embeddings_{first_page}_{nb_verbs}")
+        torch.save(embeddings, f"embeddings/embeddings{first_page}")
 
         print(f"Saved from page {first_page}")
 

@@ -9,7 +9,6 @@ emb_path = f"embeddings/embeddings{first_page}_10000"
 pages = 10000
 
 
-
 dico_detail = {}
 
 tot_p = 0
@@ -38,3 +37,8 @@ def get_data():
 
     array_pos = np.stack(list_pos)
     array_neg = np.stack(list_neg)
+
+    return array_neg, array_pos
+
+
+a, b = get_data()

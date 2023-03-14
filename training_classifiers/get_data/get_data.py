@@ -24,7 +24,7 @@ def get_data():
     """
     :return: X_train, Y_train, X_dev, Y_dev
     """
-    embedds: dict = torch.load(f"emb_path")
+    embedds: dict = torch.load(f"{emb_path}")
 
     list_pos = []
     list_neg = []

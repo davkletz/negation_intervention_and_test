@@ -70,7 +70,7 @@ labs = np.array(labs)
 
 
 
-X_train, X_test, y_train, y_test = train_test_split(arrays, labs, test_size=0.33, random_state=42, shuffle=True)
+X_train, X_test, y_train, y_test = train_test_split(arrays, labs, test_size=0.33, random_state=2, shuffle=True)
 
 print(X_train)
 print(y_train)
@@ -96,7 +96,7 @@ neg_clf = Perceptron
 #params_sgd = {'fit_intercept': False, 'class_weight': None, 'max_iter': 1000, 'random_state': 0}
 #params = params_svc
 #params = {'loss': 'hinge', 'n_jobs': 16, 'penalty': 'l2', 'max_iter': 2500, 'random_state': 0}
-params = {"penalty" : "l1", 'max_iter': 500000, 'random_state': 0}
+params = {"penalty" : "l1", 'max_iter': 500000, 'random_state': 20}
 #params = {}
 n = 50
 min_acc = 0

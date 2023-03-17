@@ -1,5 +1,5 @@
 import sys
-sys.path.append("../src")
+#sys.path.append("../src")
 from src import debias
 from joblib import load, dump
 from sklearn.model_selection import train_test_split
@@ -98,7 +98,7 @@ neg_clf = Perceptron
 #params = {'loss': 'hinge', 'n_jobs': 16, 'penalty': 'l2', 'max_iter': 2500, 'random_state': 0}
 params = {"penalty" : "l1", 'max_iter': 500000, 'random_state': 20}
 #params = {}
-n = 100
+n = 5
 min_acc = 0
 is_autoregressive = True
 dropout_rate = 0
@@ -131,4 +131,14 @@ plt.xlabel("Iteration")
 plt.ylabel("Accuracy")
 plt.legend()
 plt.savefig("accur_according_to_iterations.pdf", dpi=400)
+
+
+from joblib import dump
+
+dump(P, f"Output/P_{n}.joblib")
+
+dump(rowspace_projs, f"Output/rowspace_projs_{n}.joblib")
+
+dump(Ws, f"Output/Ws_{n}.joblib")
+
 

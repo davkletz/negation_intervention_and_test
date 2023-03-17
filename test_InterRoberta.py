@@ -35,14 +35,15 @@ a = encode_batch(["I like <mask>", "I like to <mask>", "he is <mask> ugly!"], to
 
 model_2 = RobertaForMaskedLM2.from_pretrained(model_name)
 
+path = "Output"
 
-list_n = [40]
+list_n = [5]
 P = {}
 Ws = {}
 
 for n in list_n:
-    P[n] = load(f"{abs_path}/neg_proj_matrix_{model_name}_{n}")
-    Ws[n] = load(f"{abs_path}/neg_log_reg_hyperplans_{model_name}_{n}")
+    P[n] = load(f"{path}/neg_proj_matrix_{model_name}_{n}")
+    Ws[n] = load(f"{path}/neg_log_reg_hyperplans_{model_name}_{n}")
 
 
 

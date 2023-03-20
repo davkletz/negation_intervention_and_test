@@ -42,8 +42,8 @@ P = {}
 Ws = {}
 
 for n in list_n:
-    P[n] = load(f"{path}/neg_proj_matrix_{model_name}_{n}")
-    Ws[n] = load(f"{path}/neg_log_reg_hyperplans_{model_name}_{n}")
+    P[n] = load(f"{path}/P_{n}.joblib")
+    Ws[n] = load(f"{path}/Ws_{n}.joblib")
 
 
 

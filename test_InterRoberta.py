@@ -4,6 +4,7 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 from roberta_interv.IntervRoberta import RobertaForMaskedLM2
 from joblib import load
 
+
 def encode_batch(current_batch, tokenizer, model, device, n_P = None):
 
     with torch.no_grad():
@@ -45,8 +46,8 @@ P = {}
 Ws = {}
 
 for n in list_n:
-    P[n] = load(f"{path}/P_{n}.joblib")
-    Ws[n] = load(f"{path}/Ws_{n}.joblib")
+    P[n] = torch.tensor(load(f"{path}/P_{n}.joblib"))
+    Ws[n] = torch.tensor(load(f"{path}/Ws_{n}.joblib"))
 
 
 cudastring = "cpu"

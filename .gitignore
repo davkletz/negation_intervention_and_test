@@ -175,3 +175,4 @@ results/
 neg_eval/
 
 neg_eval/__init__.py
+neg_eval_interv.py

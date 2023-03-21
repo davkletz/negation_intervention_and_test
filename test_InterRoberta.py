@@ -68,7 +68,74 @@ b = encode_batch(sentences, tokenizer, model_2, "cpu", n_P = n_P)
 print("\n#######\n")
 print(a)
 
+print("\n NEUTRAL / ")
+print(b)
+
 print("\n")
+
+
+print(a == b)
+
+
+
+model_2 = RobertaForMaskedLM2.from_pretrained(model_name)
+
+path = "Output"
+
+list_n = [n_val]
+P = {}
+Ws = {}
+
+for n in list_n:
+    P[n] = torch.tensor(load(f"{path}/P_{n}.joblib")).float()
+    Ws[n] = torch.tensor(load(f"{path}/Ws_{n}.joblib")).float()
+
+
+cudastring = "cpu"
+alpha = 1
+direction = 1
+
+model_2.init_alterings(P, Ws, cudastring, alpha, direction)
+
+n_P = n_val
+b = encode_batch(sentences, tokenizer, model_2, "cpu", n_P = n_P)
+
+
+print("\n Positive / ")
+print(b)
+
+print("\n")
+
+
+print(a == b)
+
+
+
+
+model_2 = RobertaForMaskedLM2.from_pretrained(model_name)
+
+path = "Output"
+
+list_n = [n_val]
+P = {}
+Ws = {}
+
+for n in list_n:
+    P[n] = torch.tensor(load(f"{path}/P_{n}.joblib")).float()
+    Ws[n] = torch.tensor(load(f"{path}/Ws_{n}.joblib")).float()
+
+
+cudastring = "cpu"
+alpha = 1
+direction = -1
+
+model_2.init_alterings(P, Ws, cudastring, alpha, direction)
+
+n_P = n_val
+b = encode_batch(sentences, tokenizer, model_2, "cpu", n_P = n_P)
+
+
+print("\n Negative / ")
 print(b)
 
 print("\n")

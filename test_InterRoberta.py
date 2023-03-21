@@ -19,6 +19,8 @@ def encode_batch(current_batch, tokenizer, model, device, n_P = None):
 
         mask_tokens_logits = tokens_logits['logits'][ mask_tokens_index]
 
+        print(f"mask_tokens_logits : {mask_tokens_logits}")
+
         top_tokens = torch.topk(mask_tokens_logits, 1, dim=1).indices#.tolist()
 
         predicted_tokens = tokenizer.batch_decode(top_tokens)

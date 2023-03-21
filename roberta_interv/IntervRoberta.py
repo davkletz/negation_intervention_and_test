@@ -166,9 +166,10 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
 
         for i, sentence_encoded in enumerate(representations_to_alter):
 
-            print((sentence_encoded))
+            '''print((sentence_encoded))
             print(type(sentence_encoded))
             print(type(current_P))
+            '''
 
             neutral_rpz = (current_P.matmul(sentence_encoded.T)).T
 

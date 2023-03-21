@@ -102,6 +102,7 @@ params = {"penalty" : "l1", 'max_iter': 500000, 'random_state': 20}
 #params = {}
 #n = 30
 n = int(sys.argv[2])
+print(f"n : {n}")
 min_acc = 0
 is_autoregressive = True
 dropout_rate = 0

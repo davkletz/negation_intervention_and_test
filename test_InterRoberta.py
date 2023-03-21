@@ -49,9 +49,6 @@ for n in list_n:
     Ws[n] = load(f"{path}/Ws_{n}.joblib")
 
 
-
-P = 0
-Ws = 0
 cudastring = "cpu"
 alpha = 0
 direction = 1

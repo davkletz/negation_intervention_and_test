@@ -28,6 +28,9 @@ def encode_batch(current_batch, tokenizer, model, device, n_P = None):
 
     return predicted_tokens
 
+
+sentences = ["I like to <mask>!", "I don't like to <mask>!", "he is really <mask>!", "he isn't really <mask>!"]
+
 n_val  = int(sys.argv[1])
 model_name = "roberta-large"
 
@@ -35,7 +38,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 model_ref = AutoModelForMaskedLM.from_pretrained(model_name)
 
-a = encode_batch(["I like <mask>", "I like to <mask>", "he is <mask> ugly!"], tokenizer, model_ref, "cpu")
+a = encode_batch(sentences, tokenizer, model_ref, "cpu")
 
 
 
@@ -60,7 +63,7 @@ direction = 1
 model_2.init_alterings(P, Ws, cudastring, alpha, direction)
 
 n_P = n_val
-b = encode_batch(["I like to <mask>!", "I don't like to <mask>!", "he is really <mask>!", "he isn't really <mask>!"], tokenizer, model_2, "cpu", n_P = n_P)
+b = encode_batch(sentences, tokenizer, model_2, "cpu", n_P = n_P)
 
 print("\n#######\n")
 print(a)

@@ -12,6 +12,8 @@ import torch
 
 path = sys.argv[1]
 
+
+
 model_name = "roberta-large"
 
 def tsne(vecs, labels, title="", ind2label = None, words = None, metric = "l2"):
@@ -98,7 +100,8 @@ neg_clf = Perceptron
 #params = {'loss': 'hinge', 'n_jobs': 16, 'penalty': 'l2', 'max_iter': 2500, 'random_state': 0}
 params = {"penalty" : "l1", 'max_iter': 500000, 'random_state': 20}
 #params = {}
-n = 30
+#n = 30
+n = int(sys.argv[2])
 min_acc = 0
 is_autoregressive = True
 dropout_rate = 0

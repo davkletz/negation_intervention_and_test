@@ -172,3 +172,6 @@ get_data/get_data/embeddings
 
 results/
 
+neg_eval/
+
+neg_eval/__init__.py

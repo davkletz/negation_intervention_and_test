@@ -46,8 +46,8 @@ P = {}
 Ws = {}
 
 for n in list_n:
-    P[n] = torch.tensor(load(f"{path}/P_{n}.joblib"))
-    Ws[n] = torch.tensor(load(f"{path}/Ws_{n}.joblib"))
+    P[n] = torch.tensor(load(f"{path}/P_{n}.joblib")).float()
+    Ws[n] = torch.tensor(load(f"{path}/Ws_{n}.joblib")).float()
 
 
 cudastring = "cpu"

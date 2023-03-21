@@ -249,7 +249,6 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
         sequence_output = self.alter_represention(sequence_output, n_P)
 
 
-
         prediction_scores = self.lm_head(sequence_output)
 
         masked_lm_loss = None

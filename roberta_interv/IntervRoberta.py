@@ -105,12 +105,13 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
     _keys_to_ignore_on_load_unexpected = [r"pooler"]
 
 
-    def init_alterings(self, P, Ws, cudastring, alpha, direction):
+    def init_alterings(self, P, Ws, cudastring, alpha, direction, n_p):
         self.P = P
         self.Ws = Ws
         self.cudastring = cudastring
         self.alpha = alpha
         self.direction = direction
+        self.n_p = n_p
 
 
 
@@ -132,6 +133,7 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
         self.cudastring = None
         self.alpha = None
         self.direction = None
+        self.n_p = 0
 
     def get_rowspace_projection(self, W: torch.Tensor) -> torch.Tensor:
         """
@@ -153,12 +155,12 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
         return self.lm_head.decoder
 
 
-    def alter_represention(self, representations_to_alter, n_P):
+    def alter_represention(self, representations_to_alter):
 
         time_0 = time()
 
-        current_P = self.P[n_P]
-        current_Ws = self.Ws[n_P]
+        current_P = self.P[self.n_P]
+        current_Ws = self.Ws[self.n_P]
 
         counter_repz = torch.zeros(representations_to_alter.shape).to(self.cudastring)
 
@@ -260,7 +262,6 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
             hidden_states=outputs.hidden_states,
             attentions=outputs.attentions,
         )
-
 
 
 

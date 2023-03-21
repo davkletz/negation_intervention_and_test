@@ -29,7 +29,7 @@ def encode_batch(current_batch, tokenizer, model, device, n_P = None):
     return predicted_tokens
 
 
-sentences = ["I like to smoke. I really like to <mask>!", "I like to smoke.  I don't really like to <mask>!", "he is really <mask>!", "he isn't really <mask>!"]
+sentences = ["I like to dance. Really, I like to <mask>!", "I like to dance.  Really, I don't like to <mask>!", "he is really <mask>!", "he isn't really <mask>!"]
 
 n_val  = int(sys.argv[1])
 model_name = "roberta-large"

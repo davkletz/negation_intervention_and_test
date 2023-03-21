@@ -4,14 +4,17 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 from roberta_interv.IntervRoberta import RobertaForMaskedLM2
 from joblib import load
 
-def encode_batch(current_batch, tokenizer, model, device, n_P):
+def encode_batch(current_batch, tokenizer, model, device, n_P = None):
 
     with torch.no_grad():
         encoded_sentence = tokenizer.batch_encode_plus(current_batch,padding=True,  return_tensors="pt").to(device)
 
         mask_tokens_index = torch.where(encoded_sentence['input_ids'] == tokenizer.mask_token_id)
 
-        tokens_logits = model(**encoded_sentence, n_P = n_P)
+        if n_P is None:
+            tokens_logits = model(**encoded_sentence)
+        else:
+            tokens_logits = model(**encoded_sentence, n_P = n_P)
 
         mask_tokens_logits = tokens_logits['logits'][ mask_tokens_index]
 

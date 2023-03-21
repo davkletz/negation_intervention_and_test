@@ -4,14 +4,14 @@ from transformers import AutoTokenizer, AutoModelForMaskedLM
 from roberta_interv.IntervRoberta import RobertaForMaskedLM2
 from joblib import load
 
-def encode_batch(current_batch, tokenizer, model, device):
+def encode_batch(current_batch, tokenizer, model, device, n_P):
 
     with torch.no_grad():
         encoded_sentence = tokenizer.batch_encode_plus(current_batch,padding=True,  return_tensors="pt").to(device)
 
         mask_tokens_index = torch.where(encoded_sentence['input_ids'] == tokenizer.mask_token_id)
 
-        tokens_logits = model(**encoded_sentence)
+        tokens_logits = model(**encoded_sentence, n_P = n_P)
 
         mask_tokens_logits = tokens_logits['logits'][ mask_tokens_index]
 
@@ -55,8 +55,8 @@ direction = 1
 
 model_2.init_alterings(P, Ws, cudastring, alpha, direction)
 
-
-b = encode_batch(["I like <mask>", "I like <mask>", "he is <mask> ugly!"], tokenizer, model_2, "cpu")
+n_P = 5
+b = encode_batch(["I like <mask>", "I like <mask>", "he is <mask> ugly!"], tokenizer, model_2, "cpu", n_P = n_P)
 
 print("\n#######\n")
 print(a)

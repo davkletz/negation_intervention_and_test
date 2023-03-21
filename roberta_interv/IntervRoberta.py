@@ -105,13 +105,13 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
     _keys_to_ignore_on_load_unexpected = [r"pooler"]
 
 
-    def init_alterings(self, P, Ws, cudastring, alpha, direction, n_p):
+    def init_alterings(self, P, Ws, cudastring, alpha, direction):
         self.P = P
         self.Ws = Ws
         self.cudastring = cudastring
         self.alpha = alpha
         self.direction = direction
-        self.n_p = n_p
+
 
 
 
@@ -133,7 +133,7 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
         self.cudastring = None
         self.alpha = None
         self.direction = None
-        self.n_p = 0
+
 
     def get_rowspace_projection(self, W: torch.Tensor) -> torch.Tensor:
         """
@@ -155,12 +155,12 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
         return self.lm_head.decoder
 
 
-    def alter_represention(self, representations_to_alter):
+    def alter_represention(self, representations_to_alter, n_P):
 
         time_0 = time()
 
-        current_P = self.P[self.n_P]
-        current_Ws = self.Ws[self.n_P]
+        current_P = self.P[n_P]
+        current_Ws = self.Ws[n_P]
 
         counter_repz = torch.zeros(representations_to_alter.shape).to(self.cudastring)
 
@@ -212,6 +212,7 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
         output_attentions=None,
         output_hidden_states=None,
         return_dict=None,
+        n_P = None
     ):
         r"""
         labels (:obj:`torch.LongTensor` of shape :obj:`(batch_size, sequence_length)`, `optional`):
@@ -241,7 +242,7 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
         #print("sequence_output", sequence_output)
         #print("sequence_output.shape", sequence_output.shape)
 
-        sequence_output = self.alter_represention(sequence_output)
+        sequence_output = self.alter_represention(sequence_output, n_P)
 
 
 

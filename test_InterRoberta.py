@@ -3,6 +3,7 @@ import torch
 from transformers import AutoTokenizer, AutoModelForMaskedLM
 from roberta_interv.IntervRoberta import RobertaForMaskedLM2
 from joblib import load
+import sys
 
 
 def encode_batch(current_batch, tokenizer, model, device, n_P = None):
@@ -27,7 +28,7 @@ def encode_batch(current_batch, tokenizer, model, device, n_P = None):
 
     return predicted_tokens
 
-
+n_val  = int(sys.argv[1])
 model_name = "roberta-large"
 
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -43,7 +44,7 @@ model_2 = RobertaForMaskedLM2.from_pretrained(model_name)
 
 path = "Output"
 
-list_n = [5]
+list_n = [n_val]
 P = {}
 Ws = {}
 

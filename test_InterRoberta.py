@@ -60,7 +60,7 @@ direction = 1
 model_2.init_alterings(P, Ws, cudastring, alpha, direction)
 
 n_P = n_val
-b = encode_batch(["I like <mask>!", "I like <mask>!", "he is <mask> ugly!"], tokenizer, model_2, "cpu", n_P = n_P)
+b = encode_batch(["I like to <mask>!", "I don't like to <mask>!", "he is really <mask>!", "he isn't really <mask>!"], tokenizer, model_2, "cpu", n_P = n_P)
 
 print("\n#######\n")
 print(a)

@@ -105,10 +105,9 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
     _keys_to_ignore_on_load_unexpected = [r"pooler"]
 
 
-    def init_alterings(self, P, Ws, cudastring, alpha, direction):
+    def init_alterings(self, P, Ws, alpha, direction):
         self.P = P
         self.Ws = Ws
-        self.cudastring = cudastring
         self.alpha = alpha
         self.direction = direction
 
@@ -130,7 +129,6 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
         self.init_weights()
         self.P = None
         self.Ws = None
-        self.cudastring = None
         self.alpha = None
         self.direction = None
 
@@ -162,32 +160,31 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
         current_P = self.P[n_P]
         current_Ws = self.Ws[n_P]
 
-        counter_repz = torch.zeros(representations_to_alter.shape).to(self.cudastring)
+        counter_repz = torch.zeros(representations_to_alter.shape).to(self.device)
+        print('lmlm')
+        print(representations_to_alter.shape)
 
         for i, sentence_encoded in enumerate(representations_to_alter):
 
-            '''print((sentence_encoded))
-            print(type(sentence_encoded))
-            print(type(current_P))
-            '''
+            print(f"im: {sentence_encoded.shape}")
 
-            neutral_rpz = (current_P.matmul(sentence_encoded.T)).T
 
-            feature_rpz = torch.zeros(neutral_rpz.shape).to(self.cudastring)
+            neutral_rpz = (current_P.matmul(sentence_encoded.T)).T #projection sur l'espace nul
 
+            feature_rpz = torch.zeros(neutral_rpz.shape).to(self.device) #Projection sur l'espace ortogonal
 
 
             for w_vect in current_Ws:
                 scal = (w_vect.matmul(sentence_encoded.T)).T
-                coeff = -torch.ones(scal.shape).to(self.cudastring)
+                coeff = -torch.ones(scal.shape).to(self.device)
                 coeff[torch.where(torch.sign(scal) == torch.sign(torch.tensor(self.direction)))] = 1
-                w_proj_mat = torch.tensor(self.get_rowspace_projection(w_vect)).to(self.cudastring)
+                w_proj_mat = torch.tensor(self.get_rowspace_projection(w_vect)).to(self.device)
                 prof_feature = (w_proj_mat.matmul(sentence_encoded.T)).T
                 feature_rpz += coeff * prof_feature
 
             time_3 = time()
 
-            counter_repz[i] = neutral_rpz + self.alpha * feature_rpz
+            counter_repz[i] = neutral_rpz + self.alpha * feature_rpz #multiplicaiton par le facteur alpha
 
         return counter_repz
 

@@ -156,9 +156,11 @@ def get_contextual_embeddings(path: str, device, verb_embs : dict):
                         negation_found[current_index] = [1, 1]
 
             # we check whether we have found negation:
-            elif root.token['lemma'] == 'not' or root.token['lemma'] == 'never' or (
+            elif root.token['lemma'] == 'not':
+                '''   or root.token['lemma'] == 'never' or (
                     root.token['lemma'] == 'more' and root.token['id'] > 1 and phrase[root.token['id'] - 2]['lemma'] == 'no') or (
-                    root.token['lemma'] == 'longer' and root.token['id'] > 1 and phrase[root.token['id'] - 2]['lemma'] == 'no'):
+                    root.token['lemma'] == 'longer' and root.token['id'] > 1 and phrase[root.token['id'] - 2]['lemma'] == 'no'):'''
+
                 if current_index in negation_found:  # it is possible for the head to be something other than a verb,
                     # for example in the phrase "Martin will have no more apple sauce"
                     # where the head of negation is "sauce" - in this case we will ignore it

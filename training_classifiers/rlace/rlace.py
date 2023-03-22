@@ -215,7 +215,66 @@ def solve_adv_game(X_train, y_train, X_dev, y_dev, rank=1, device="cpu", out_ite
     return output
 
 
-if __name__ == "__main__":
+
+def rlace_proj(X, y):
+
+    X_train, y_train, X_dev, y_dev = X, y, X, y
+    num_iters = 5000
+    rank = 1
+    optimizer_class = torch.optim.SGD
+    optimizer_params_P = {"lr": 0.003, "weight_decay": 1e-4}
+    optimizer_params_predictor = {"lr": 0.003, "weight_decay": 1e-4}
+    epsilon = 0.001  # stop 0.1% from majority acc
+    batch_size = 256
+
+    output = solve_adv_game(X_train, y_train, X_dev, y_dev, rank=rank, device="cpu", out_iters=num_iters,
+                            optimizer_class=optimizer_class, optimizer_params_P=optimizer_params_P,
+                            optimizer_params_predictor=optimizer_params_predictor, epsilon=epsilon,
+                            batch_size=batch_size)
+
+    # train a classifier
+
+    P_svd = output["P"]
+    P_before_svd = output["P_before_svd"]
+    svm = init_classifier()
+
+    svm.fit(X_train[:], y_train[:])
+    score_original = svm.score(X_dev, y_dev)
+
+    svm = init_classifier()
+    svm.fit(X_train[:] @ P_before_svd, y_train[:])
+    score_projected_no_svd = svm.score(X_dev @ P_before_svd, y_dev)
+
+    svm = init_classifier()
+    svm.fit(X_train[:] @ P_svd, y_train[:])
+    score_projected_svd_dev = svm.score(X_dev @ P_svd, y_dev)
+    score_projected_svd_train = svm.score(X_train @ P_svd, y_train)
+    maj_acc_dev = get_majority_acc(y_dev)
+    maj_acc_train = get_majority_acc(y_train)
+
+    print("===================================================")
+    print(
+        "Original Acc, dev: {:.3f}%; Acc, projected, no svd, dev: {:.3f}%; Acc, projected+SVD, train: {:.3f}%; Acc, projected+SVD, dev: {:.3f}%".format(
+            score_original * 100, score_projected_no_svd * 100, score_projected_svd_train * 100,
+            score_projected_svd_dev * 100))
+    print("Majority Acc, dev: {:.3f} %".format(maj_acc_dev * 100))
+    print("Majority Acc, train: {:.3f} %".format(maj_acc_train * 100))
+    print("Gap, dev: {:.3f} %".format(np.abs(maj_acc_dev - score_projected_svd_dev) * 100))
+    print("Gap, train: {:.3f} %".format(np.abs(maj_acc_train - score_projected_svd_train) * 100))
+    print("===================================================")
+    eigs_before_svd, _ = np.linalg.eigh(P_before_svd)
+    print("Eigenvalues, before SVD: {}".format(eigs_before_svd[:]))
+
+    eigs_after_svd, _ = np.linalg.eigh(P_svd)
+    print("Eigenvalues, after SVD: {}".format(eigs_after_svd[:]))
+
+    eps = 1e-6
+    assert np.abs((eigs_after_svd > eps).sum() - (dim - rank)) < eps
+
+
+
+
+'''if __name__ == "__main__":
     # random.seed(0)
     # np.random.seed(0)
 
@@ -291,4 +350,4 @@ if __name__ == "__main__":
 
     eps = 1e-6
     assert np.abs((eigs_after_svd > eps).sum() - (dim - rank)) < eps
-
+'''

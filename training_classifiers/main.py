@@ -1,6 +1,7 @@
 import numpy as np
 from get_data.get_data import get_data
 from train_classifiers.debias import debias
+from rlace.rlace import rlace_proj
 
 array_neg, array_pos = get_data()
 
@@ -13,11 +14,16 @@ labs = [0 for k in range(len(array_neg))]
 labs.extend([1 for k in range(len(array_pos))])
 arrays = np.concatenate((array_neg, array_pos), axis=0)
 
-print(arrays.shape)
-quit()
+#print(arrays.shape)
+#quit()
 
+INLP = False
 
-debias(array_neg, array_pos)
+if INLP:
+    debias(array_neg, array_pos)
+
+else:
+    rlace_proj(arrays, labs)
 
 
 

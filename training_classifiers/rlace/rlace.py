@@ -219,6 +219,9 @@ def solve_adv_game(X_train, y_train, X_dev, y_dev, rank=1, device="cpu", out_ite
 def rlace_proj(X, y):
 
     X_train, y_train, X_dev, y_dev = X, y, X, y
+
+    dim = X_train.shape[-1]
+    print(dim)
     num_iters = 5000
     rank = 1
     optimizer_class = torch.optim.SGD

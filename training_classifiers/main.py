@@ -14,6 +14,7 @@ labs = [0 for k in range(len(array_neg))]
 labs.extend([1 for k in range(len(array_pos))])
 arrays = np.concatenate((array_neg, array_pos), axis=0)
 
+labs_np = np.array(labs)
 #print(arrays.shape)
 #quit()
 
@@ -23,7 +24,7 @@ if INLP:
     debias(array_neg, array_pos)
 
 else:
-    rlace_proj(arrays, labs)
+    rlace_proj(arrays, labs_np)
 
 
 

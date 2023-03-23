@@ -223,7 +223,7 @@ def rlace_proj(X, y, device):
 
     dim = X_train.shape[-1]
     #print(dim)
-    num_iters = 500
+    num_iters = 5000
     rank = 1
     optimizer_class = torch.optim.SGD
     optimizer_params_P = {"lr": 0.003, "weight_decay": 1e-4}

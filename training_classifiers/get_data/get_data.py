@@ -36,6 +36,12 @@ def get_data():
     array_pos = np.stack(list_pos)
     array_neg = np.stack(list_neg)
 
+
+    size = min(len(array_pos), len(array_neg))
+
+    array_pos = array_pos[:size]
+    array_neg = array_neg[:size]
+
     return array_neg, array_pos
 
 

@@ -6,6 +6,7 @@ import time
 from torch.optim import SGD, Adam
 import random
 import sklearn
+import pickle as pkl
 
 EVAL_CLF_PARAMS = {"loss": "log_loss", "tol": 1e-4, "iters_no_change": 15, "alpha": 1e-4, "max_iter": 25000}
 NUM_CLFS_IN_EVAL = 3  # change to 1 for large dataset / high dimensionality
@@ -222,7 +223,7 @@ def rlace_proj(X, y, device):
 
     dim = X_train.shape[-1]
     #print(dim)
-    num_iters = 50000
+    num_iters = 500
     rank = 1
     optimizer_class = torch.optim.SGD
     optimizer_params_P = {"lr": 0.003, "weight_decay": 1e-4}
@@ -234,6 +235,9 @@ def rlace_proj(X, y, device):
                             optimizer_class=optimizer_class, optimizer_params_P=optimizer_params_P,
                             optimizer_params_predictor=optimizer_params_predictor, epsilon=epsilon,
                             batch_size=batch_size)
+
+
+    pkl.dump(output, open("output.pkl", "wb"))
 
     # train a classifier
 

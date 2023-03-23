@@ -23,6 +23,8 @@ labs_np = np.array(labs)
 #quit()
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 
+print(f"Working on {device}")
+
 INLP = False
 
 if INLP:

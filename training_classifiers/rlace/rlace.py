@@ -216,12 +216,12 @@ def solve_adv_game(X_train, y_train, X_dev, y_dev, rank=1, device="cpu", out_ite
 
 
 
-def rlace_proj(X, y):
+def rlace_proj(X, y, device):
 
     X_train, y_train, X_dev, y_dev = X, y, X, y
 
     dim = X_train.shape[-1]
-    print(dim)
+    #print(dim)
     num_iters = 50000
     rank = 1
     optimizer_class = torch.optim.SGD
@@ -230,7 +230,7 @@ def rlace_proj(X, y):
     epsilon = 0.001  # stop 0.1% from majority acc
     batch_size = 256
 
-    output = solve_adv_game(X_train, y_train, X_dev, y_dev, rank=rank, device="cpu", out_iters=num_iters,
+    output = solve_adv_game(X_train, y_train, X_dev, y_dev, rank=rank, device=device, out_iters=num_iters,
                             optimizer_class=optimizer_class, optimizer_params_P=optimizer_params_P,
                             optimizer_params_predictor=optimizer_params_predictor, epsilon=epsilon,
                             batch_size=batch_size)

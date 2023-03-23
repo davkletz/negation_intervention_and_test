@@ -3,6 +3,9 @@ from get_data.get_data import get_data
 from train_classifiers.debias import debias
 from rlace.rlace import rlace_proj
 import torch
+import sys
+
+num_iters = int(sys.argv[1])
 
 array_neg, array_pos = get_data()
 
@@ -26,7 +29,7 @@ if INLP:
     debias(array_neg, array_pos)
 
 else:
-    rlace_proj(arrays, labs_np, device)
+    rlace_proj(arrays, labs_np, device, num_iters)
 
 
 

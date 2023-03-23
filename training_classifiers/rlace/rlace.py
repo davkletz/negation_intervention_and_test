@@ -217,13 +217,13 @@ def solve_adv_game(X_train, y_train, X_dev, y_dev, rank=1, device="cpu", out_ite
 
 
 
-def rlace_proj(X, y, device):
+def rlace_proj(X, y, device, num_iters):
 
     X_train, y_train, X_dev, y_dev = X, y, X, y
 
     dim = X_train.shape[-1]
     #print(dim)
-    num_iters = 50000
+
     rank = 1
     optimizer_class = torch.optim.SGD
     optimizer_params_P = {"lr": 0.003, "weight_decay": 1e-4}
@@ -237,7 +237,7 @@ def rlace_proj(X, y, device):
                             batch_size=batch_size)
 
 
-    pkl.dump(output, open("output.pkl", "wb"))
+    pkl.dump(output, open(f"Proj_{num_iters}.pkl", "wb"))
 
     # train a classifier
 

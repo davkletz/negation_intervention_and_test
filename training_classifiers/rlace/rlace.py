@@ -101,7 +101,7 @@ def prepare_output(P, rank, score):
 
 
 def solve_adv_game(X_train, y_train, X_dev, y_dev, rank=1, device="cpu", out_iters=75000, in_iters_adv=1,
-                   in_iters_clf=1, epsilon=0.0015, batch_size=128, evalaute_every=1000, optimizer_class=SGD,
+                   in_iters_clf=1, epsilon=0.0015, batch_size=128, evalaute_every=20000, optimizer_class=SGD,
                    optimizer_params_P={"lr": 0.005, "weight_decay": 1e-4},
                    optimizer_params_predictor={"lr": 0.005, "weight_decay": 1e-4}):
     """

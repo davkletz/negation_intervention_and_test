@@ -4,10 +4,19 @@ import pickle as pkl
 
 import numpy as np
 from sklearn.linear_model import SGDClassifier
+import torch.nn as nn
+import torch
 from get_data import get_data
 from sklearn.metrics import confusion_matrix
 from numpy.random import seed
 import sys
+from transformers.activations import gelu
+
+import torch.optim as optim
+
+
+
+
 
 alpha = int(sys.argv[1])
 
@@ -16,6 +25,38 @@ NUM_CLFS_IN_EVAL = 1  # change to 1 for large dataset / high dimensionality
 
 
 seed(42)
+
+
+
+class RobertaLMHead2(nn.Module):
+    """Roberta Head for masked language modeling."""
+
+    def __init__(self):
+        super().__init__()
+        self.dense = nn.Linear(in_features=1024, out_features=1024, bias=True)
+        self.layer_norm = nn.LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
+
+        self.decoder = nn.Linear(in_features=1024, out_features=50265, bias=True)
+        self.bias = nn.Parameter(torch.zeros(50265))
+
+        # Need a link between the two variables so that the bias is correctly resized with `resize_token_embeddings`
+        self.decoder.bias = self.bias
+
+    def forward(self, features, **kwargs):
+
+
+        x = self.dense(features)
+        x = gelu(x)
+        x = self.layer_norm(x)
+
+        # project back to size of vocabulary with bias
+        x = self.decoder(x)
+
+        return x
+
+
+
+
 
 def get_projection(P, rank):
     D, U = np.linalg.eigh(P)
@@ -49,6 +90,60 @@ def init_classifier():
 
 X, y = get_data()
 
+
+
+
+net = RobertaLMHead2(1)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
+
+
+
+for epoch in range(2):  # loop over the dataset multiple times
+
+    running_loss = 0.0
+    for i, data in enumerate(X):
+        # get the inputs; data is a list of [inputs, labels]
+        inputs, labels = X[i], y[i]
+
+        # zero the parameter gradients
+        optimizer.zero_grad()
+
+        # forward + backward + optimize
+        outputs = net(inputs)
+        loss = criterion(outputs, labels)
+        loss.backward()
+        optimizer.step()
+
+        # print statistics
+        running_loss += loss.item()
+        if i % 2000 == 1999:    # print every 2000 mini-batches
+            print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
+            running_loss = 0.0
+
+print('Finished Training')
+
+
+
+correct = 0
+total = 0
+# since we're not training, we don't need to calculate the gradients for our outputs
+with torch.no_grad():
+    for i, data in enumerate(X):
+        images, labels = X[i], y[i]
+        # calculate outputs by running images through the network
+        outputs = net(images)
+        # the class with the highest energy is what we choose as prediction
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+print(f'Accuracy of the network on the 10000 test images: {100 * correct // total} %')
+
+
+
+quit()
 
 '''svm = init_classifier()
 
@@ -128,53 +223,6 @@ print(f"confusion matrix: {a}")
 '''
 
 
-print('\n\n##############################\n##############################\n\n')
-
-
-
-print(X.shape)
-
-print(p.shape)
-
-
-print((X @ p) == np.matmul(X, p))
-
-print((X @ p).shape)
-
-
-vals = X @ (X - (X @ p)).T
-
-vals = np.diagonal(vals)
-print(vals)
-print(vals.shape)
-signs = np.sign(vals)
-
-
-svm = init_classifier()
-
-vals = vals.reshape(-1,1)
-
-svm.fit(vals, y[:])
-score_projected_val = svm.score(vals, y)
-print(f"Projected score (vals): {score_projected_val}")
-
-
-print(vals[y == 0])
-print(vals[y == 1])
-
-print(signs)
-
-signs_corr = signs < 0
-
-c = signs_corr.astype(int)
-print(c)
-
-a = confusion_matrix(y,  c)
-
-print(f"confusion matrix: {a}")
-'''
-
-
 
 
 svm = init_classifier()
@@ -190,6 +238,7 @@ print(f"y_score_projected_Null: {y_score_projected_Null}")
 
 y_score_projected_Null = svm.score(X - X @ p, y)
 print(f"y_score_projected OT: {y_score_projected_Null}")
+
 
 
 y_score_projected_Null = svm.predict(X)
@@ -208,7 +257,6 @@ refX = np.multiply(fact, (X-X@p).T).T
 
 newX += alpha * refX
 #svm.fit(newX, y[:])
-
 
 y_score_projected_Null = svm.score(newX, y)
 
@@ -271,3 +319,4 @@ y_score_projected_Null = svm.predict(refX)
 a = confusion_matrix(y,  y_score_projected_Null)
 
 print(f"confusion matrix after : {a}")
+'''

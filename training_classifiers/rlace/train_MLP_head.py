@@ -23,7 +23,7 @@ def model_train(model, X_train, y_train, X_val, y_val):
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
     n_epochs = 1   # number of epochs to run
-    batch_size = 10  # size of each batch
+    batch_size = 4  # size of each batch
     batch_start = torch.arange(0, len(X_train), batch_size)
 
     # Hold the best model
@@ -79,7 +79,6 @@ X_train, X_test, y_train, y_test = train_test_split(X_torch, y_torch, train_size
 # define 5-fold cross validation test harness
 kfold = StratifiedKFold(n_splits=5, shuffle=True)
 
-print(X_train.get_device())
 
 cv_scores_deep = []
 for train, test in kfold.split(X_train, y_train):

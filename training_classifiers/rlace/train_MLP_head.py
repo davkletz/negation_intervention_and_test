@@ -20,10 +20,10 @@ device = torch.device("cuda") if torch.cuda.is_available() else "cpu"
 def model_train(model, X_train, y_train, X_val, y_val):
     # loss function and optimizer
     loss_fn = nn.CrossEntropyLoss()  # binary cross entropy
-    optimizer = optim.Adam(model.parameters(), lr=0.0001)
+    optimizer = optim.SGD(model.parameters(), lr=0.0001)
 
     n_epochs = 1   # number of epochs to run
-    batch_size = 1  # size of each batch
+    batch_size = 8  # size of each batch
     batch_start = torch.arange(0, len(X_train), batch_size)
 
     # Hold the best model
@@ -99,10 +99,7 @@ model = MLP_head().to(device)
 acc = model_train(model, X_train, y_train, X_test, y_test)
 print("Accuracy (deep): %.2f" % acc)
 
-deep_acc = np.mean(cv_scores_deep)
-deep_std = np.std(cv_scores_deep)
 
-print("Deep: %.2f%% (+/- %.2f%%)" % (deep_acc*100, deep_std*100))
 
 
 

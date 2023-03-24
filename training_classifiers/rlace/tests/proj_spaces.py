@@ -224,3 +224,28 @@ y_score_projected_Null = svm.predict(newX)
 a = confusion_matrix(y,  y_score_projected_Null)
 
 print(f"confusion matrix after : {a}")
+
+
+
+
+print('######\n')
+
+newX = X @ p
+
+
+refX =  (X-X@p)
+
+newX += alpha * refX
+
+
+y_score_projected_Null = svm.score(newX, y)
+
+
+print(f"y_score_projected_Null: {y_score_projected_Null}")
+y_score_projected_Null = svm.predict(newX)
+
+
+
+a = confusion_matrix(y,  y_score_projected_Null)
+
+print(f"confusion matrix after : {a}")

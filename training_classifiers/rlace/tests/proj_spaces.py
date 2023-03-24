@@ -145,6 +145,12 @@ print(vals.shape)
 signs = np.sign(vals)
 
 
+svm = init_classifier()
+
+svm.fit(vals, y[:])
+score_projected_val = svm.score(vals, y)
+print(f"Projected score (vals): {score_projected_val}")
+
 
 print(vals[y == 0])
 print(vals[y == 1])

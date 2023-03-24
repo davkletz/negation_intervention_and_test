@@ -201,11 +201,8 @@ print(f"confusion matrix before: {a}")
 newX = X @ p
 
 fact = y == 1
-print(fact[:35])
-print(fact[-35:])
 fact = (-1) ** fact
-print(fact[:35])
-print(fact[-35:])
+
 
 refX = np.multiply(fact, (X-X@p).T).T
 
@@ -239,6 +236,31 @@ newX += alpha * refX
 
 
 y_score_projected_Null = svm.score(newX, y)
+
+
+print(f"y_score_projected_Null: {y_score_projected_Null}")
+y_score_projected_Null = svm.predict(newX)
+
+
+
+a = confusion_matrix(y,  y_score_projected_Null)
+
+print(f"confusion matrix after : {a}")
+
+
+
+
+
+
+print('######\n')
+
+
+refX =  (X-X@p)
+
+
+
+
+y_score_projected_Null = svm.score(refX, y)
 
 
 print(f"y_score_projected_Null: {y_score_projected_Null}")

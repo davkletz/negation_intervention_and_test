@@ -30,7 +30,6 @@ def model_train(model, X_train, y_train, X_val, y_val):
     best_acc = - np.inf   # init to negative infinity
     best_weights = None
 
-    print(f"1 {torch.cuda.memory_allocated(device)}")
 
     for epoch in range(n_epochs):
         model.train()
@@ -74,7 +73,6 @@ def model_train(model, X_train, y_train, X_val, y_val):
 
 
 
-
 X, y = get_data()
 
 X_torch, y_torch = torch.from_numpy(X), torch.from_numpy(y) # ne pas mettre sur GPU
@@ -89,14 +87,17 @@ kfold = StratifiedKFold(n_splits=5, shuffle=True)
 
 
 cv_scores_deep = []
-for train, test in kfold.split(X_train, y_train):
+'''for train, test in kfold.split(X_train, y_train):
     # create model, train, and get accuracy
     model = MLP_head().to(device)
     acc = model_train(model, X_train[train], y_train[train], X_train[test], y_train[test])
     print("Accuracy (deep): %.2f" % acc)
     cv_scores_deep.append(acc)
+'''
 
-
+model = MLP_head().to(device)
+acc = model_train(model, X_train, y_train, X_test, y_test)
+print("Accuracy (deep): %.2f" % acc)
 
 deep_acc = np.mean(cv_scores_deep)
 deep_std = np.std(cv_scores_deep)

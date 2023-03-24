@@ -253,7 +253,7 @@ def rlace_proj(X, y, device, num_iters, clf_type):
                             batch_size=batch_size)
 
 
-    pkl.dump(output, open(f"Proj_{num_iters}.pkl", "wb"))
+    pkl.dump(output, open(f"Proj_{num_iters}_{clf_type}.pkl", "wb"))
 
     # train a classifier
 

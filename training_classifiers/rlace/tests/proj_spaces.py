@@ -11,7 +11,6 @@ from get_data import get_data
 from sklearn.metrics import confusion_matrix
 from numpy.random import seed
 import sys
-from transformers.activations import gelu
 
 import torch.optim as optim
 
@@ -26,34 +25,6 @@ NUM_CLFS_IN_EVAL = 1  # change to 1 for large dataset / high dimensionality
 
 
 seed(42)
-
-
-
-class RobertaLMHead2(nn.Module):
-    """Roberta Head for masked language modeling."""
-
-    def __init__(self):
-        super().__init__()
-        self.dense = nn.Linear(in_features=1024, out_features=1024, bias=True)
-        self.layer_norm = nn.LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
-
-        self.decoder = nn.Linear(in_features=1024, out_features=1, bias=True)
-        self.bias = nn.Parameter(torch.zeros(1))
-
-        # Need a link between the two variables so that the bias is correctly resized with `resize_token_embeddings`
-        self.decoder.bias = self.bias
-
-    def forward(self, features, **kwargs):
-
-
-        x = self.dense(features)
-        x = gelu(x)
-        x = self.layer_norm(x)
-
-        # project back to size of vocabulary with bias
-        x = self.decoder(x)
-
-        return x
 
 
 

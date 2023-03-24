@@ -68,8 +68,13 @@ def model_train(model, X_train, y_train, X_val, y_val):
 
 X, y = get_data()
 
+X_torch, y_torch = torch.from_numpy(X).to(device), torch.from_numpy(y).to(device)
+X_torch, y_torch = X_torch[:20], y_torch[:20].reshape(-1, 1)
+
+X_torch, y_torch = X_torch.float(), y_torch.float()
+
 # train-test split: Hold out the test set for final model evaluation
-X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, shuffle=True)
+X_train, X_test, y_train, y_test = train_test_split(X_torch, y_torch, train_size=0.7, shuffle=True)
 
 # define 5-fold cross validation test harness
 kfold = StratifiedKFold(n_splits=5, shuffle=True)

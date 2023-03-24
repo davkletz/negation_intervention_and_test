@@ -162,12 +162,16 @@ class RoberlaceForMaskedLM(RobertaPreTrainedModel):
         return P_final
 
 
-    def alter_represention(self, representations_to_alter, P, rank):
+    def alter_represention(self, representations_to_alter, P_svd):
 
         time_0 = time()
 
-        P_svd = self.get_projection(P, rank)
+        #P_svd = self.get_projection(P, rank)
         neutral_rpz = representations_to_alter @ P_svd
+        feature_rpz = representations_to_alter - neutral_rpz
+
+
+        counter_repz =  neutral_rpz + self.alpha*feature_rpz
 
         return counter_repz
 

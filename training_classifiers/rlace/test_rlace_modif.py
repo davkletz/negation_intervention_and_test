@@ -101,7 +101,6 @@ def prepare_output(P, rank, score):
     print((P.shape))
     print((P_final.shape))
     print(np.eye(P.shape[0]).shape)
-    quit()
     return {"score": score, "P_before_svd": np.eye(P.shape[0]) - P, "P": P_final}
 
 
@@ -214,7 +213,6 @@ def solve_adv_game(X_train, y_train, X_dev, y_dev, rank=1, device="cpu", out_ite
             pbar.refresh()  # to show immediately the update
             time.sleep(0.01)
 
-
         if i > 1 and np.abs(best_score - maj) < epsilon:
             # if i > 1 and np.abs(best_loss - label_entropy) < epsilon:
             break
@@ -247,7 +245,7 @@ if __name__ == "__main__":
     X_dev, y_dev = X[l_train:], y[l_train:]
 
     # arguments
-    num_iters = 50
+    num_iters = 5000
     rank = 1
     optimizer_class = torch.optim.SGD
     optimizer_params_P = {"lr": 0.003, "weight_decay": 1e-4}
@@ -267,6 +265,7 @@ if __name__ == "__main__":
     # train a classifier
 
     P_svd = output["P"]
+    P_P = np.eye(P_svd.shape[0]) - P_svd
     P_before_svd = output["P_before_svd"]
     svm = init_classifier()
 
@@ -284,22 +283,27 @@ if __name__ == "__main__":
     maj_acc_dev = get_majority_acc(y_dev)
     maj_acc_train = get_majority_acc(y_train)
 
-    print("===================================================")
-    print(
-        "Original Acc, dev: {:.3f}%; Acc, projected, no svd, dev: {:.3f}%; Acc, projected+SVD, train: {:.3f}%; Acc, projected+SVD, dev: {:.3f}%".format(
-            score_original * 100, score_projected_no_svd * 100, score_projected_svd_train * 100,
-            score_projected_svd_dev * 100))
-    print("Majority Acc, dev: {:.3f} %".format(maj_acc_dev * 100))
-    print("Majority Acc, train: {:.3f} %".format(maj_acc_train * 100))
-    print("Gap, dev: {:.3f} %".format(np.abs(maj_acc_dev - score_projected_svd_dev) * 100))
-    print("Gap, train: {:.3f} %".format(np.abs(maj_acc_train - score_projected_svd_train) * 100))
-    print("===================================================")
-    eigs_before_svd, _ = np.linalg.eigh(P_before_svd)
-    print("Eigenvalues, before SVD: {}".format(eigs_before_svd[:]))
+    score_projected_PP = svm.score(X_dev @ P_P, y_dev)
+    score_projected_svd_and_PP = svm.score(X_dev @ P_svd + X_dev @ P_P, y_dev)
 
-    eigs_after_svd, _ = np.linalg.eigh(P_svd)
-    print("Eigenvalues, after SVD: {}".format(eigs_after_svd[:]))
+
+
+
+    print("===================================================")
+    print(f"Original Acc, dev:{ score_original * 100}")
+    print(f"; Acc, projected, no svd, dev:) :{score_projected_no_svd * 100} ")
+    print(f" Acc, projected+SVD, train: {score_projected_svd_train * 100}")
+    print(f"Acc, projected+SVD, dev: {score_projected_svd_dev * 100}")
+
+
+
+    print(f"Acc, projected on P, dev: {score_projected_PP * 100}")
+
+
+    print(f"Acc, projected on SVD and P, dev: {score_projected_svd_and_PP * 100}")
+
+
 
     eps = 1e-6
-    assert np.abs((eigs_after_svd > eps).sum() - (dim - rank)) < eps
+    #assert np.abs((eigs_after_svd > eps).sum() - (dim - rank)) < eps
 

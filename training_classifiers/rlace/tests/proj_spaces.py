@@ -186,7 +186,7 @@ fact == (-1) ** fact
 
 print(fact.shape)
 print(X.shape)
-refX = fact * (X-X@p)
+refX = np.multiply(fact, (X-X@p).T).T
 
 newX += refX
 svm.fit(newX, y[:])

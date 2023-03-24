@@ -187,7 +187,7 @@ print(f"confusion matrix before: {a}")
 
 newX = X @ p
 
-fact = y== 1
+fact = y == 1
 print(fact[:35])
 print(fact[-35:])
 fact = (-1) ** fact

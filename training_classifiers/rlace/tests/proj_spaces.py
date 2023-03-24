@@ -136,6 +136,9 @@ print((X @ p).shape)
 
 vals = X @ (X @ p).T
 
+vals = np.diagonal(vals)
+print(vals)
+print(vals.shape)
 signs = np.sign(vals)
 
 print(signs)

@@ -39,7 +39,7 @@ pp = np.eye(p.shape[0], p.shape[1]) - p
 def init_classifier():
     return SGDClassifier(loss=EVAL_CLF_PARAMS["loss"], fit_intercept=True, max_iter=EVAL_CLF_PARAMS["max_iter"],
                          tol=EVAL_CLF_PARAMS["tol"], n_iter_no_change=EVAL_CLF_PARAMS["iters_no_change"],
-                         n_jobs=32, alpha=EVAL_CLF_PARAMS["alpha"])
+                         n_jobs=32, alpha=EVAL_CLF_PARAMS["alpha"], random_state=42)
 
 
 

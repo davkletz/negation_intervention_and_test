@@ -23,7 +23,7 @@ def model_train(model, X_train, y_train, X_val, y_val):
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
     n_epochs = 1   # number of epochs to run
-    batch_size = 2  # size of each batch
+    batch_size = 1  # size of each batch
     batch_start = torch.arange(0, len(X_train), batch_size)
 
     # Hold the best model

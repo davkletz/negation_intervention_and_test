@@ -35,6 +35,7 @@ def model_train(model, X_train, y_train, X_val, y_val):
         with tqdm.tqdm(batch_start, unit="batch", mininterval=0, disable=True) as bar:
             bar.set_description(f"Epoch {epoch}")
             for start in bar:
+                print(start)
                 # take a batch
                 X_batch = X_train[start:start+batch_size]
                 y_batch = y_train[start:start+batch_size]

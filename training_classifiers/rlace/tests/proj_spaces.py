@@ -37,7 +37,7 @@ class RobertaLMHead2(nn.Module):
         self.dense = nn.Linear(in_features=1024, out_features=1024, bias=True)
         self.layer_norm = nn.LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
 
-        self.decoder = nn.Linear(in_features=1024, out_features=2, bias=True)
+        self.decoder = nn.Linear(in_features=1024, out_features=1, bias=True)
         self.bias = nn.Parameter(torch.zeros(2))
 
         # Need a link between the two variables so that the bias is correctly resized with `resize_token_embeddings`

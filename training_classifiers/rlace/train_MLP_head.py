@@ -14,7 +14,7 @@ from tests.get_data import get_data
 from mlp_head.mlp_head import MLP_head
 
 device = torch.device("cuda") if torch.cuda.is_available() else "cpu"
-#device = "cpu"
+device = "cpu"
 
 
 def model_train(model, X_train, y_train, X_val, y_val):

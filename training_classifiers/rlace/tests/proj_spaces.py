@@ -47,9 +47,12 @@ svm = init_classifier()
 svm.fit(X, y)
 score_original = svm.score(X, y)
 
+print(f"Original score: {score_original}")
+
 svm = init_classifier()
 svm.fit(X[:] @ p, y[:])
 score_projected_no_svd = svm.score(X @ p, y)
 
+print(f"Projected score (no svd): {score_projected_no_svd}")
 
 

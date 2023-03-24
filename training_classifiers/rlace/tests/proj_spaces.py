@@ -7,6 +7,9 @@ from sklearn.linear_model import SGDClassifier
 from get_data import get_data
 from sklearn.metrics import confusion_matrix
 from numpy.random import seed
+import sys
+
+alpha = int(sys.argv[1])
 
 EVAL_CLF_PARAMS = {"loss": "log_loss", "tol": 1e-4, "iters_no_change": 15, "alpha": 1e-4, "max_iter": 25000}
 NUM_CLFS_IN_EVAL = 1  # change to 1 for large dataset / high dimensionality
@@ -203,7 +206,7 @@ print(fact[-35:])
 
 refX = np.multiply(fact, (X-X@p).T).T
 
-newX += refX
+newX += alpha * refX
 #svm.fit(newX, y[:])
 
 

@@ -57,9 +57,11 @@ def model_train(model, X_train, y_train, X_val, y_val):
                 optimizer.step()
                 # print progress
 
-                
+
         # evaluate accuracy at end of each epoch
         model.eval()
+        X_val = X_val.to(device)
+        y_val = y_val.to(device)
         y_pred = model(X_val)
         acc = (y_pred.round() == y_val).float().mean()
         acc = float(acc)

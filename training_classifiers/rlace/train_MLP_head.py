@@ -14,7 +14,7 @@ from tests.get_data import get_data
 from mlp_head.mlp_head import MLP_head
 
 device = torch.device("cuda") if torch.cuda.is_available() else "cpu"
-device = "cpu"
+#device = "cpu"
 
 
 def model_train(model, X_train, y_train, X_val, y_val):
@@ -37,29 +37,27 @@ def model_train(model, X_train, y_train, X_val, y_val):
         with tqdm.tqdm(batch_start, unit="batch", mininterval=0, disable=True) as bar:
             bar.set_description(f"Epoch {epoch}")
             for start in bar:
-                print(f"2 {torch.cuda.memory_allocated(device)}")
-                print(f"Epoch {epoch},  batch {start}")
+                #print(f"2 {torch.cuda.memory_allocated(device)}")
+                #print(f"Epoch {epoch},  batch {start}")
                 # take a batch
                 X_batch = X_train[start:start+batch_size]
                 y_batch = y_train[start:start+batch_size]
                 X_batch = X_batch.to(device)
                 y_batch = y_batch.to(device)
                 y_pred = model(X_batch)
-                print(y_pred)
-                print(y_batch)
+
                 loss = loss_fn(y_pred, y_batch)
                 # backward pass
                 optimizer.zero_grad()
-                print(f"3 {torch.cuda.memory_allocated(device)}")
-                print(f"MOS")
+                #print(f"3 {torch.cuda.memory_allocated(device)}")
+                #print(f"MOS")
                 loss.backward()
-                print(f"4 {torch.cuda.memory_allocated(device)}")
+                #print(f"4 {torch.cuda.memory_allocated(device)}")
                 # update weights
                 optimizer.step()
                 # print progress
 
-                print(f"5 {torch.cuda.memory_allocated(device)}")
-                print(f"EOS")
+                
         # evaluate accuracy at end of each epoch
         model.eval()
         y_pred = model(X_val)
@@ -78,7 +76,7 @@ def model_train(model, X_train, y_train, X_val, y_val):
 X, y = get_data()
 
 X_torch, y_torch = torch.from_numpy(X), torch.from_numpy(y) # ne pas mettre sur GPU
-X_torch, y_torch = X_torch[:20], y_torch[:20].reshape(-1, 1)
+X_torch, y_torch = X_torch, y_torch.reshape(-1, 1)
 X_torch, y_torch = X_torch.float(), y_torch.float()
 
 # train-test split: Hold out the test set for final model evaluation

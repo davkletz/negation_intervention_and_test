@@ -74,7 +74,6 @@ a = confusion_matrix(y,  y_score_projected_no_svd)
 
 print(f"confusion matrix: {a}")
 
-print(a)
 
 
 print('\n\n#####\n\n')
@@ -88,9 +87,6 @@ y_score_projected_no_svd = svm.predict(X @ p)
 
 
 print(f"Projected score (ot): {score_projected_OT}")
-
-
-a = confusion_matrix(y,  y_score_projected_no_svd)
 
 
 y_score_orig_ot = svm.predict(ot_X)
@@ -120,3 +116,28 @@ a = confusion_matrix(y,  y_score_orig_antiP)
 
 
 print(f"confusion matrix: {a}")
+
+
+
+
+
+print('\n\n##############################\n##############################\n\n')
+
+
+a = confusion_matrix(y,  y_score_projected_no_svd)
+
+vals = X @ (X @ p).T
+
+signs = np.sign(vals)
+
+print(signs)
+
+signs_corr = signs < 0
+
+c = signs_corr.astype(int)
+
+
+a = confusion_matrix(y,  c)
+
+print(f"confusion matrix: {a}")
+

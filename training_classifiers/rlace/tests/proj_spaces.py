@@ -131,6 +131,9 @@ print(X.shape)
 
 print(p.shape)
 
+
+print((X @ p) == np.matmul(X, p))
+
 print((X @ p).shape)
 
 

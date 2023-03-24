@@ -179,12 +179,18 @@ svm.fit(X @ p, y[:])
 y_score_projected_Null = svm.predict(X @ p)
 
 
+
+a = confusion_matrix(y,  y_score_projected_Null)
+
+print(f"confusion matrix before: {a}")
+
+
 newX = X @ p
 
 fact = y_score_projected_Null== 1
+print(fact[:35])
 fact = (-1) ** fact
-
-print(fact)
+print(fact[:35])
 
 refX = np.multiply(fact, (X-X@p).T).T
 
@@ -196,4 +202,4 @@ y_score_projected_Null = svm.predict(newX)
 
 a = confusion_matrix(y,  y_score_projected_Null)
 
-print(f"confusion matrix: {a}")
+print(f"confusion matrix after : {a}")

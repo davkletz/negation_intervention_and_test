@@ -43,6 +43,7 @@ def model_train(model, X_train, y_train, X_val, y_val):
                 loss = loss_fn(y_pred, y_batch)
                 # backward pass
                 optimizer.zero_grad()
+                print(f"MOS")
                 loss.backward()
                 # update weights
                 optimizer.step()
@@ -72,7 +73,6 @@ X, y = get_data()
 
 X_torch, y_torch = torch.from_numpy(X), torch.from_numpy(y) # ne pas mettre sur GPU
 X_torch, y_torch = X_torch[:20], y_torch[:20].reshape(-1, 1)
-
 X_torch, y_torch = X_torch.float(), y_torch.float()
 
 # train-test split: Hold out the test set for final model evaluation

@@ -5,7 +5,7 @@ import torch.nn as nn
 import torch
 from transformers.activations import gelu
 
-class MLP_head(nn.Module):
+class MLP_head2(nn.Module):
     """Roberta Head for masked language modeling."""
 
     def __init__(self):
@@ -21,8 +21,9 @@ class MLP_head(nn.Module):
 
 
 
-
     def forward(self, features, **kwargs):
+
+
         x = self.dense(features)
         x = gelu(x)
         x = self.layer_norm(x)
@@ -32,3 +33,22 @@ class MLP_head(nn.Module):
 
         return x
 
+
+
+
+
+class MLP_head(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.l1 = nn.Linear(1024, 60)
+        self.l2 = nn.Linear(60, 60)
+        self.l3 = nn.Linear(60, 1)
+    def forward(self, x):
+        x = self.l1(x)
+        x = torch.relu(x)
+        x = self.l1(x)
+        x = torch.relu(x)
+        x = self.l1(x)
+
+
+        return self.l2(torch.tanh(self.l1(x)))

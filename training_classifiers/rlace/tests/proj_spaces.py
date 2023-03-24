@@ -5,6 +5,7 @@ import pickle as pkl
 import copy
 import numpy as np
 from sklearn.linear_model import SGDClassifier
+from sklearn.neural_network import MLPClassifier
 import torch.nn as nn
 import torch
 from get_data import get_data
@@ -65,64 +66,8 @@ X, y = get_data()
 device = torch.device("cuda:0") if torch.cuda.is_available() else "cpu"
 
 
-net = RobertaLMHead2().to(device)
 
-criterion = nn.BCELoss()
-optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
-
-X_torch, y_torch = torch.from_numpy(X).to(device), torch.from_numpy(y).to(device)
-X_torch, y_torch = X_torch[:20], y_torch[:20].reshape(-1, 1)
-
-X_torch, y_torch = X_torch.float(), y_torch.float()
-
-print(X_torch, y_torch)
-
-for epoch in range(1):  # loop over the dataset multiple times
-
-    running_loss = 0.0
-    for i, data in enumerate(X_torch):
-        # get the inputs; data is a list of [inputs, labels]
-        inputs, labels = X_torch[i], y_torch[i]
-
-        # zero the parameter gradients
-        optimizer.zero_grad()
-
-        # forward + backward + optimize
-        outputs = net(inputs)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
-
-        # print statistics
-        running_loss += loss.item()
-        if i % 2000 == 1999:    # print every 2000 mini-batches
-            print(f'[{epoch + 1}, {i + 1:5d}] loss: {running_loss / 2000:.3f}')
-            running_loss = 0.0
-
-print('Finished Training')
-
-
-
-correct = 0
-total = 0
-best_acc = 0
-# since we're not training, we don't need to calculate the gradients for our outputs
-with torch.no_grad():
-    net.eval()
-    y_pred = net(X_torch)
-    acc = (y_pred.round() == y_torch).float().mean()
-    acc = float(acc)
-    if acc > best_acc:
-        best_acc = acc
-        best_weights = copy.deepcopy(net.state_dict())
-
-print(f'Accuracy of the network on the 10000 test images: {100 * correct // total} %')
-
-
-
-quit()
-
-'''svm = init_classifier()
+svm = init_classifier()
 
 svm.fit(X, y)
 score_original = svm.score(X, y)
@@ -130,8 +75,34 @@ score_original = svm.score(X, y)
 print(f"Original score: {score_original}")
 
 
+mlp_c = MLPClassifier(hidden_layer_sizes=(60, 60, 60), activation='relu', solver='adam', alpha=0.0001, batch_size='auto')
 
-y_score_orig = svm.predict(X)
+mlp_c.fit(X, y)
+score_original = mlp_c.score(X, y)
+
+print(f"Original score MLP: {score_original}")
+
+
+
+svm = init_classifier()
+svm.fit(X[:] @ p, y[:])
+score_projected_no_svd = svm.score(X @ p, y)
+y_score_projected_no_svd = svm.predict(X @ p)
+
+
+print(f"Projected score : {score_projected_no_svd}")
+
+
+
+mlp_c = MLPClassifier(hidden_layer_sizes=(60, 60, 60), activation='relu', solver='adam', alpha=0.0001, batch_size='auto')
+mlp_c.fit(X[:] @ p, y[:])
+score_projected_no_svd = mlp_c.score(X @ p, y)
+y_score_projected_mlp = mlp_c.predict(X @ p)
+
+
+print(f"Projected score MLP: {y_score_projected_mlp}")
+
+'''y_score_orig = svm.predict(X)
 a = confusion_matrix(y,  y_score_orig)
 
 print(f"confusion matrix: {a}")

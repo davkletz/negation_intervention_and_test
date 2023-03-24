@@ -182,7 +182,7 @@ y_score_projected_Null = svm.predict(X @ p)
 newX = X @ p
 
 fact = y_score_projected_Null== 1
-fact == (-1) ** fact
+fact = (-1) ** fact
 
 print(fact)
 

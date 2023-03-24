@@ -89,10 +89,10 @@ y_score_projected_no_svd = svm.predict(X @ p)
 print(f"Projected score : {score_projected_no_svd}")
 
 
+score_projected_no_svd = mlp_c.score(X @ p, y)
 
 mlp_c = MLPClassifier(hidden_layer_sizes=(60, 60, 60), activation='relu', solver='adam', alpha=0.0001, batch_size='auto')
 
-score_projected_no_svd = mlp_c.score(X @ p, y)
 print(f"Projected score MLP: {score_projected_no_svd}")
 
 mlp_c.fit(X @ p, y)

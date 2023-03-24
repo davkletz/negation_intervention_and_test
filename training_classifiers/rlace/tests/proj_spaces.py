@@ -98,14 +98,15 @@ net = RobertaLMHead2()
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
+X_torch, y_torch = torch.from_numpy(X), torch.from_numpy(y)
 
 
 for epoch in range(2):  # loop over the dataset multiple times
 
     running_loss = 0.0
-    for i, data in enumerate(X):
+    for i, data in enumerate(X_torch):
         # get the inputs; data is a list of [inputs, labels]
-        inputs, labels = X[i], y[i]
+        inputs, labels = X_torch[i], y_torch[i]
 
         # zero the parameter gradients
         optimizer.zero_grad()
@@ -130,8 +131,8 @@ correct = 0
 total = 0
 # since we're not training, we don't need to calculate the gradients for our outputs
 with torch.no_grad():
-    for i, data in enumerate(X):
-        images, labels = X[i], y[i]
+    for i, data in enumerate(X_torch):
+        images, labels = X_torch[i], y_torch[i]
         # calculate outputs by running images through the network
         outputs = net(images)
         # the class with the highest energy is what we choose as prediction

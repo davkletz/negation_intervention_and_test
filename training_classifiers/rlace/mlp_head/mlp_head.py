@@ -46,9 +46,9 @@ class MLP_head(nn.Module):
     def forward(self, x):
         x = self.l1(x)
         x = torch.relu(x)
-        x = self.l1(x)
+        x = self.l2(x)
         x = torch.relu(x)
-        x = self.l1(x)
+        x = self.l3(x)
 
 
-        return self.l2(torch.tanh(self.l1(x)))
+        return x

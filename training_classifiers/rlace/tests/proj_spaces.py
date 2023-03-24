@@ -175,13 +175,22 @@ print(f"confusion matrix: {a}")
 
 
 svm = init_classifier()
-svm.fit(X[:] @ p, y[:])
-score_projected_no_svd = svm.score(X @ p, y)
-y_score_projected_no_svd = svm.predict(X @ p)
+svm.fit(X @ p, y[:])
+y_score_projected_Null = svm.predict(X @ p)
 
 
-print(f"Projected score : {score_projected_no_svd}")
+newX = X @ p
 
-a = confusion_matrix(y,  y_score_projected_no_svd)
+fact = y_score_projected_Null== 1
+fact == (-1) ** fact
+
+newX += fact * (X-X@p)
+
+svm.fit(newX, y[:])
+y_score_projected_Null = svm.predict(newX)
+
+
+
+a = confusion_matrix(y,  y_score_projected_Null)
 
 print(f"confusion matrix: {a}")

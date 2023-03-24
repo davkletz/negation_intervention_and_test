@@ -1,4 +1,5 @@
-
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
 
 import pickle as pkl
 
@@ -90,15 +91,15 @@ def init_classifier():
 
 X, y = get_data()
 
+device = torch.device("cuda:0") if torch.cuda.is_available() else "cpu"
 
 
-
-net = RobertaLMHead2()
+net = RobertaLMHead2().to(device)
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
-X_torch, y_torch = torch.from_numpy(X), torch.from_numpy(y)
+X_torch, y_torch = torch.from_numpy(X).to(device), torch.from_numpy(y).to(device)
 
 
 for epoch in range(2):  # loop over the dataset multiple times

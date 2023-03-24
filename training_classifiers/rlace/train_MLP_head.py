@@ -30,11 +30,14 @@ def model_train(model, X_train, y_train, X_val, y_val):
     best_acc = - np.inf   # init to negative infinity
     best_weights = None
 
+    print(f"1 {torch.cuda.memory_allocated(device)}")
+
     for epoch in range(n_epochs):
         model.train()
         with tqdm.tqdm(batch_start, unit="batch", mininterval=0, disable=True) as bar:
             bar.set_description(f"Epoch {epoch}")
             for start in bar:
+                print(f"2 {torch.cuda.memory_allocated(device)}")
                 print(f"Epoch {epoch},  batch {start}")
                 # take a batch
                 X_batch = X_train[start:start+batch_size]
@@ -43,6 +46,7 @@ def model_train(model, X_train, y_train, X_val, y_val):
                 loss = loss_fn(y_pred, y_batch)
                 # backward pass
                 optimizer.zero_grad()
+                print(f"3 {torch.cuda.memory_allocated(device)}")
                 print(f"MOS")
                 loss.backward()
                 # update weights
@@ -53,6 +57,7 @@ def model_train(model, X_train, y_train, X_val, y_val):
                     loss=float(loss),
                     acc=float(acc)
                 )
+                print(f"4 {torch.cuda.memory_allocated(device)}")
                 print(f"EOS")
         # evaluate accuracy at end of each epoch
         model.eval()

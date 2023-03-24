@@ -37,8 +37,8 @@ class RobertaLMHead2(nn.Module):
         self.dense = nn.Linear(in_features=1024, out_features=1024, bias=True)
         self.layer_norm = nn.LayerNorm((1024,), eps=1e-05, elementwise_affine=True)
 
-        self.decoder = nn.Linear(in_features=1024, out_features=50265, bias=True)
-        self.bias = nn.Parameter(torch.zeros(50265))
+        self.decoder = nn.Linear(in_features=1024, out_features=2, bias=True)
+        self.bias = nn.Parameter(torch.zeros(2))
 
         # Need a link between the two variables so that the bias is correctly resized with `resize_token_embeddings`
         self.decoder.bias = self.bias
@@ -101,6 +101,8 @@ optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
 X_torch, y_torch = torch.from_numpy(X).to(device), torch.from_numpy(y).to(device)
 X_torch, y_torch = X_torch[:20], y_torch[:20]
+
+print(X_torch, y_torch)
 
 for epoch in range(1):  # loop over the dataset multiple times
 

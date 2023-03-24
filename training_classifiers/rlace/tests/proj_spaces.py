@@ -93,10 +93,9 @@ print(f"Projected score : {score_projected_no_svd}")
 mlp_c = MLPClassifier(hidden_layer_sizes=(60, 60, 60), activation='relu', solver='adam', alpha=0.0001, batch_size='auto')
 mlp_c.fit(X[:] @ p, y[:])
 score_projected_no_svd = mlp_c.score(X @ p, y)
-y_score_projected_mlp = mlp_c.predict(X @ p)
 
 
-print(f"Projected score MLP: {y_score_projected_mlp}")
+print(f"Projected score MLP: {score_projected_no_svd}")
 
 '''y_score_orig = svm.predict(X)
 a = confusion_matrix(y,  y_score_orig)

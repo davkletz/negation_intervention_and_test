@@ -180,16 +180,19 @@ print(f"confusion matrix: {a}")
 svm = init_classifier()
 #svm.fit(X @ p, y[:])
 svm.fit(X, y[:])
+
 y_score_projected_Null = svm.score(X, y)
-
 print(f"y_score_projected_Null: {y_score_projected_Null}")
+
+
 y_score_projected_Null = svm.score(X @ p, y)
-
 print(f"y_score_projected_Null: {y_score_projected_Null}")
+
+y_score_projected_Null = svm.score(X - X @ p, y)
+print(f"y_score_projected OT: {y_score_projected_Null}")
+
+
 y_score_projected_Null = svm.predict(X)
-
-
-
 a = confusion_matrix(y,  y_score_projected_Null)
 
 print(f"confusion matrix before: {a}")

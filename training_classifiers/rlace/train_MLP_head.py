@@ -51,15 +51,12 @@ def model_train(model, X_train, y_train, X_val, y_val):
                 print(f"3 {torch.cuda.memory_allocated(device)}")
                 print(f"MOS")
                 loss.backward()
+                print(f"4 {torch.cuda.memory_allocated(device)}")
                 # update weights
                 optimizer.step()
                 # print progress
-                acc = (y_pred.round() == y_batch).float().mean()
-                bar.set_postfix(
-                    loss=float(loss),
-                    acc=float(acc)
-                )
-                print(f"4 {torch.cuda.memory_allocated(device)}")
+
+                print(f"5 {torch.cuda.memory_allocated(device)}")
                 print(f"EOS")
         # evaluate accuracy at end of each epoch
         model.eval()

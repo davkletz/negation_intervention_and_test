@@ -184,8 +184,7 @@ newX = X @ p
 fact = y_score_projected_Null== 1
 fact == (-1) ** fact
 
-print(fact.shape)
-print(X.shape)
+print(fact)
 refX = np.multiply(fact, (X-X@p).T).T
 
 newX += refX

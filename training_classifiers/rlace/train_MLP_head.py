@@ -45,6 +45,8 @@ def model_train(model, X_train, y_train, X_val, y_val):
                 X_batch = X_batch.to(device)
                 y_batch = y_batch.to(device)
                 y_pred = model(X_batch)
+                print(y_pred)
+                print(y_batch)
                 loss = loss_fn(y_pred, y_batch)
                 # backward pass
                 optimizer.zero_grad()

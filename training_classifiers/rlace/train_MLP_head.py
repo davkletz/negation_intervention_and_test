@@ -1,6 +1,8 @@
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = '0'
 import copy
+
+
 import numpy as np
 
 import torch
@@ -9,21 +11,47 @@ import torch.optim as optim
 import tqdm
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
-from tests.get_data import get_data
 
-from mlp_head.mlp_head import MLP_head
+
+
+class Deep(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.layer1 = nn.Linear(60, 60)
+        self.act1 = nn.ReLU()
+        self.layer2 = nn.Linear(60, 60)
+        self.act2 = nn.ReLU()
+        self.layer3 = nn.Linear(60, 60)
+        self.act3 = nn.ReLU()
+        self.output = nn.Linear(60, 1)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        x = self.act1(self.layer1(x))
+        x = self.act2(self.layer2(x))
+        x = self.act3(self.layer3(x))
+        x = self.sigmoid(self.output(x))
+        return x
+
 
 device = torch.device("cuda") if torch.cuda.is_available() else "cpu"
 #device = "cpu"
 
 
+
+
+X = torch.rand(1000, 60, dtype=torch.float32)# ne pas mettre sur GPU
+y = torch.randint(0,1,(1000, 1), dtype=torch.float32)# ne pas mettre sur GPU
+
+
+# Helper function to train one model
 def model_train(model, X_train, y_train, X_val, y_val):
     # loss function and optimizer
     loss_fn = nn.BCELoss()  # binary cross entropy
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
     n_epochs = 1   # number of epochs to run
-    batch_size = 1  # size of each batch
+    batch_size = 10  # size of each batch
     batch_start = torch.arange(0, len(X_train), batch_size)
 
     # Hold the best model
@@ -38,17 +66,16 @@ def model_train(model, X_train, y_train, X_val, y_val):
             bar.set_description(f"Epoch {epoch}")
             for start in bar:
                 print(f"2 {torch.cuda.memory_allocated(device)}")
-                print(f"Epoch {epoch},  batch {start}")
                 # take a batch
                 X_batch = X_train[start:start+batch_size]
                 y_batch = y_train[start:start+batch_size]
                 y_pred = model(X_batch)
                 loss = loss_fn(y_pred, y_batch)
                 # backward pass
-                optimizer.zero_grad()
                 print(f"3 {torch.cuda.memory_allocated(device)}")
-                print(f"MOS")
+                optimizer.zero_grad()
                 loss.backward()
+                print(f"4 {torch.cuda.memory_allocated(device)}")
                 # update weights
                 optimizer.step()
                 # print progress
@@ -57,8 +84,7 @@ def model_train(model, X_train, y_train, X_val, y_val):
                     loss=float(loss),
                     acc=float(acc)
                 )
-                print(f"4 {torch.cuda.memory_allocated(device)}")
-                print(f"EOS")
+                print(f"5 {torch.cuda.memory_allocated(device)}")
         # evaluate accuracy at end of each epoch
         model.eval()
         y_pred = model(X_val)
@@ -71,26 +97,18 @@ def model_train(model, X_train, y_train, X_val, y_val):
     model.load_state_dict(best_weights)
     return best_acc
 
-
-
-
-X, y = get_data()
-
-X_torch, y_torch = torch.from_numpy(X), torch.from_numpy(y) # ne pas mettre sur GPU
-X_torch, y_torch = X_torch[:20], y_torch[:20].reshape(-1, 1)
-X_torch, y_torch = X_torch.float(), y_torch.float()
-
 # train-test split: Hold out the test set for final model evaluation
-X_train, X_test, y_train, y_test = train_test_split(X_torch, y_torch, train_size=0.7, shuffle=True)
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, shuffle=True)
 
 # define 5-fold cross validation test harness
 kfold = StratifiedKFold(n_splits=5, shuffle=True)
 
+print(X_train.get_device())
 
 cv_scores_deep = []
 for train, test in kfold.split(X_train, y_train):
     # create model, train, and get accuracy
-    model = MLP_head().to(device)
+    model = Deep().to(device)
     acc = model_train(model, X_train[train].to(device), y_train[train].to(device), X_train[test].to(device), y_train[test].to(device))
     print("Accuracy (deep): %.2f" % acc)
     cv_scores_deep.append(acc)
@@ -101,9 +119,4 @@ deep_acc = np.mean(cv_scores_deep)
 deep_std = np.std(cv_scores_deep)
 
 print("Deep: %.2f%% (+/- %.2f%%)" % (deep_acc*100, deep_std*100))
-
-
-
-
-
 

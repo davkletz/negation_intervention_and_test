@@ -25,13 +25,15 @@ device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cp
 
 print(f"Working on {device}")
 
+clf_type = sys.argv[2]
+
 INLP = False
 
 if INLP:
     debias(array_neg, array_pos)
 
 else:
-    rlace_proj(arrays, labs_np, device, num_iters)
+    rlace_proj(arrays, labs_np, device, num_iters, clf_type)
 
 
 

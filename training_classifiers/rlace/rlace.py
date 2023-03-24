@@ -2,6 +2,7 @@ import numpy as np
 import tqdm
 import torch
 from sklearn.linear_model import SGDClassifier
+from sklearn.neural_network import MLPClassifier
 import time
 from torch.optim import SGD, Adam
 import random
@@ -12,10 +13,15 @@ EVAL_CLF_PARAMS = {"loss": "log_loss", "tol": 1e-4, "iters_no_change": 15, "alph
 NUM_CLFS_IN_EVAL = 3  # change to 1 for large dataset / high dimensionality
 
 
-def init_classifier():
+def init_SGD():
     return SGDClassifier(loss=EVAL_CLF_PARAMS["loss"], fit_intercept=True, max_iter=EVAL_CLF_PARAMS["max_iter"],
                          tol=EVAL_CLF_PARAMS["tol"], n_iter_no_change=EVAL_CLF_PARAMS["iters_no_change"],
                          n_jobs=32, alpha=EVAL_CLF_PARAMS["alpha"])
+
+
+def init_MLP():
+    return MLPClassifier(hidden_layer_sizes=(60, 60, 60), activation='relu', solver='adam', alpha=0.0001, batch_size='auto')
+
 
 
 def symmetric(X):
@@ -23,14 +29,17 @@ def symmetric(X):
     return X
 
 
-def get_score(X_train, y_train, X_dev, y_dev, P, rank):
+def get_score(X_train, y_train, X_dev, y_dev, P, rank, clf_type = "sgd"):
     P_svd = get_projection(P, rank)
 
     loss_vals = []
     accs = []
 
     for i in range(NUM_CLFS_IN_EVAL):
-        clf = init_classifier()
+        if clf_type == "sgd":
+            clf = init_SGD()
+        elif clf_type == "mlp":
+            clf = init_MLP()
         clf.fit(X_train @ P_svd, y_train)
         y_pred = clf.predict_proba(X_dev @ P_svd)
         loss = sklearn.metrics.log_loss(y_dev, y_pred)
@@ -100,7 +109,7 @@ def prepare_output(P, rank, score):
     return {"score": score, "P_before_svd": np.eye(P.shape[0]) - P, "P": P_final}
 
 
-def solve_adv_game(X_train, y_train, X_dev, y_dev, rank=1, device="cpu", out_iters=75000, in_iters_adv=1,
+def solve_adv_game(X_train, y_train, X_dev, y_dev,clf_type = "sgd", rank=1, device="cpu", out_iters=75000, in_iters_adv=1,
                    in_iters_clf=1, epsilon=0.0015, batch_size=128, evalaute_every=20000, optimizer_class=SGD,
                    optimizer_params_P={"lr": 0.005, "weight_decay": 1e-4},
                    optimizer_params_predictor={"lr": 0.005, "weight_decay": 1e-4}):
@@ -192,7 +201,7 @@ def solve_adv_game(X_train, y_train, X_dev, y_dev, rank=1, device="cpu", out_ite
 
         if i % evalaute_every == 0:
             # pbar.set_description("Evaluating current adversary...")
-            loss_val, score = get_score(X_train, y_train, X_train, y_train, P.detach().cpu().numpy(), rank)
+            loss_val, score = get_score(X_train, y_train, X_train, y_train, P.detach().cpu().numpy(), rank, clf_type)
             if loss_val > best_loss:  # if np.abs(score - maj) < np.abs(best_score - maj):
                 best_P, best_loss = symmetric(P).detach().cpu().numpy().copy(), loss_val
             if np.abs(score - maj) < np.abs(best_score - maj):
@@ -217,7 +226,7 @@ def solve_adv_game(X_train, y_train, X_dev, y_dev, rank=1, device="cpu", out_ite
 
 
 
-def rlace_proj(X, y, device, num_iters):
+def rlace_proj(X, y, device, num_iters, clf_type):
 
     X_train, y_train, X_dev, y_dev = X, y, X, y
 
@@ -231,7 +240,7 @@ def rlace_proj(X, y, device, num_iters):
     epsilon = 0.001  # stop 0.1% from majority acc
     batch_size = 256
 
-    output = solve_adv_game(X_train, y_train, X_dev, y_dev, rank=rank, device=device, out_iters=num_iters,
+    output = solve_adv_game(X_train, y_train, X_dev, y_dev, clf_type, rank=rank, device=device, out_iters=num_iters,
                             optimizer_class=optimizer_class, optimizer_params_P=optimizer_params_P,
                             optimizer_params_predictor=optimizer_params_predictor, epsilon=epsilon,
                             batch_size=batch_size)

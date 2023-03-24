@@ -187,10 +187,12 @@ print(f"confusion matrix before: {a}")
 
 newX = X @ p
 
-fact = y_score_projected_Null== 1
+fact = y== 1
 print(fact[:35])
+print(fact[-35:])
 fact = (-1) ** fact
 print(fact[:35])
+print(fact[-35:])
 
 refX = np.multiply(fact, (X-X@p).T).T
 

@@ -100,7 +100,7 @@ criterion = nn.BCELoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
 X_torch, y_torch = torch.from_numpy(X).to(device), torch.from_numpy(y).to(device)
-X_torch, y_torch = X_torch[:20], y_torch[:20]
+X_torch, y_torch = X_torch[:20], y_torch[:20].reshape(-1, 1)
 
 print(X_torch, y_torch)
 

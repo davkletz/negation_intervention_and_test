@@ -200,7 +200,7 @@ print(f"confusion matrix before: {a}")
 
 newX = X @ p
 
-fact = y == 1
+fact = y == 0
 fact = (-1) ** fact
 
 
@@ -264,7 +264,7 @@ y_score_projected_Null = svm.score(refX, y)
 
 
 print(f"y_score_projected_Null: {y_score_projected_Null}")
-y_score_projected_Null = svm.predict(newX)
+y_score_projected_Null = svm.predict(refX)
 
 
 

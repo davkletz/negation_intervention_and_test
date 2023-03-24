@@ -93,7 +93,7 @@ X, y = get_data()
 
 
 
-net = RobertaLMHead2(1)
+net = RobertaLMHead2()
 
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)

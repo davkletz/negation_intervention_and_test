@@ -13,6 +13,13 @@ EVAL_CLF_PARAMS = {"loss": "log_loss", "tol": 1e-4, "iters_no_change": 15, "alph
 NUM_CLFS_IN_EVAL = 3  # change to 1 for large dataset / high dimensionality
 
 
+
+def init_classifier(clf_type):
+    if clf_type == "sgd":
+        return init_SGD()
+    if clf_type == "mlp":
+        return init_MLP()
+
 def init_SGD():
     return SGDClassifier(loss=EVAL_CLF_PARAMS["loss"], fit_intercept=True, max_iter=EVAL_CLF_PARAMS["max_iter"],
                          tol=EVAL_CLF_PARAMS["tol"], n_iter_no_change=EVAL_CLF_PARAMS["iters_no_change"],
@@ -252,19 +259,19 @@ def rlace_proj(X, y, device, num_iters, clf_type):
 
     P_svd = output["P"]
     P_before_svd = output["P_before_svd"]
-    svm = init_classifier()
+    clf = init_classifier(clf_type)
 
-    svm.fit(X_train[:], y_train[:])
-    score_original = svm.score(X_dev, y_dev)
+    clf.fit(X_train[:], y_train[:])
+    score_original = clf.score(X_dev, y_dev)
 
-    svm = init_classifier()
-    svm.fit(X_train[:] @ P_before_svd, y_train[:])
-    score_projected_no_svd = svm.score(X_dev @ P_before_svd, y_dev)
+    clf = init_classifier(clf_type)
+    clf.fit(X_train[:] @ P_before_svd, y_train[:])
+    score_projected_no_svd = clf.score(X_dev @ P_before_svd, y_dev)
 
-    svm = init_classifier()
-    svm.fit(X_train[:] @ P_svd, y_train[:])
-    score_projected_svd_dev = svm.score(X_dev @ P_svd, y_dev)
-    score_projected_svd_train = svm.score(X_train @ P_svd, y_train)
+    clf = init_classifier(clf_type)
+    clf.fit(X_train[:] @ P_svd, y_train[:])
+    score_projected_svd_dev = clf.score(X_dev @ P_svd, y_dev)
+    score_projected_svd_train = clf.score(X_train @ P_svd, y_train)
     maj_acc_dev = get_majority_acc(y_dev)
     maj_acc_train = get_majority_acc(y_train)
 

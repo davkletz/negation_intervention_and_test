@@ -47,7 +47,7 @@ def init_classifier():
 X, y = get_data()
 
 
-'''svm = init_classifier()
+svm = init_classifier()
 
 svm.fit(X, y)
 score_original = svm.score(X, y)
@@ -76,7 +76,7 @@ a = confusion_matrix(y,  y_score_projected_no_svd)
 print(f"confusion matrix: {a}")
 
 
-
+seed(42)
 print('\n\n#####\n\n')
 svm = init_classifier()
 ot_X = X - X @ p
@@ -99,7 +99,7 @@ print(f"confusion matrix: {a}")
 print('\n\n#####\n\n')
 
 
-
+seed(42)
 svm = init_classifier()
 anti_P_X = X @ pp
 
@@ -167,4 +167,4 @@ print(c)
 a = confusion_matrix(y,  c)
 
 print(f"confusion matrix: {a}")
-
+'''

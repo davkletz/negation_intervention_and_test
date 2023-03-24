@@ -147,7 +147,7 @@ signs = np.sign(vals)
 
 svm = init_classifier()
 
-svm.fit(vals, y[:])
+svm.fit(vals.reshape(-1,1), y[:])
 score_projected_val = svm.score(vals, y)
 print(f"Projected score (vals): {score_projected_val}")
 

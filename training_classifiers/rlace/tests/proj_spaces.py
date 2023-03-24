@@ -20,7 +20,9 @@ def get_projection(P, rank):
 
 
 
-path = "/home/dkletz/tmp/pycharm_project_99/2022-23/Interventions/with_neg_eval/negation_intervention_and_test/training_classifiers/rlace"
+#path = "/home/dkletz/tmp/pycharm_project_99/2022-23/Interventions/with_neg_eval/negation_intervention_and_test/training_classifiers/rlace"
+
+path = "/data/dkletz/Experiences/negation_intervention_and_test/training_classifiers/rlace"
 
 with open(f"{path}/Proj_50000.pkl", "rb") as f:
     P = pkl.load(f)

@@ -19,7 +19,7 @@ device = "cpu"
 
 def model_train(model, X_train, y_train, X_val, y_val):
     # loss function and optimizer
-    loss_fn = nn.BCELoss()  # binary cross entropy
+    loss_fn = nn.CrossEntropyLoss()  # binary cross entropy
     optimizer = optim.Adam(model.parameters(), lr=0.0001)
 
     n_epochs = 1   # number of epochs to run

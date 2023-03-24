@@ -42,6 +42,8 @@ def model_train(model, X_train, y_train, X_val, y_val):
                 # take a batch
                 X_batch = X_train[start:start+batch_size]
                 y_batch = y_train[start:start+batch_size]
+                X_batch = X_batch.to(device)
+                y_batch = y_batch.to(device)
                 y_pred = model(X_batch)
                 loss = loss_fn(y_pred, y_batch)
                 # backward pass
@@ -91,7 +93,7 @@ cv_scores_deep = []
 for train, test in kfold.split(X_train, y_train):
     # create model, train, and get accuracy
     model = MLP_head().to(device)
-    acc = model_train(model, X_train[train].to(device), y_train[train].to(device), X_train[test].to(device), y_train[test].to(device))
+    acc = model_train(model, X_train[train], y_train[train], X_train[test], y_train[test])
     print("Accuracy (deep): %.2f" % acc)
     cv_scores_deep.append(acc)
 

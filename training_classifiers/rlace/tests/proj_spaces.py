@@ -5,8 +5,10 @@ import pickle as pkl
 import numpy as np
 from sklearn.linear_model import SGDClassifier
 from get_data import get_data
+from sklearn.metrics import confusion_matrix
 
-EVAL_CLF_PARAMS = {"loss": "log", "tol": 1e-4, "iters_no_change": 15, "alpha": 1e-4, "max_iter": 25000}
+
+EVAL_CLF_PARAMS = {"loss": "log_loss", "tol": 1e-4, "iters_no_change": 15, "alpha": 1e-4, "max_iter": 25000}
 NUM_CLFS_IN_EVAL = 1  # change to 1 for large dataset / high dimensionality
 
 
@@ -51,24 +53,53 @@ score_original = svm.score(X, y)
 
 print(f"Original score: {score_original}")
 
+
+
+y_score_orig = svm.predict(X)
+a = confusion_matrix(y,  y_score_orig)
+
+print(f"confusion matrix: {a}")
+
+print('\n\n#####\n\n')
+
 svm = init_classifier()
 svm.fit(X[:] @ p, y[:])
 score_projected_no_svd = svm.score(X @ p, y)
+y_score_projected_no_svd = svm.predict(X @ p)
+
 
 print(f"Projected score : {score_projected_no_svd}")
 
+a = confusion_matrix(y,  y_score_projected_no_svd)
+
+print(f"confusion matrix: {a}")
+
+print(a)
 
 
+print('\n\n#####\n\n')
 svm = init_classifier()
 ot_X = X - X @ p
 
 svm.fit(ot_X, y[:])
 score_projected_OT = svm.score(ot_X, y)
 
+y_score_projected_no_svd = svm.predict(X @ p)
+
 
 print(f"Projected score (ot): {score_projected_OT}")
 
 
+a = confusion_matrix(y,  y_score_projected_no_svd)
+
+
+y_score_orig_ot = svm.predict(ot_X)
+a = confusion_matrix(y,  y_score_orig_ot)
+
+print(f"confusion matrix: {a}")
+
+
+print('\n\n#####\n\n')
 
 
 
@@ -83,3 +114,9 @@ print(f"Projected score (anti P): {score_projected_AT}")
 
 
 
+y_score_orig_antiP = svm.predict(anti_P_X)
+a = confusion_matrix(y,  y_score_orig_antiP)
+
+
+
+print(f"confusion matrix: {a}")

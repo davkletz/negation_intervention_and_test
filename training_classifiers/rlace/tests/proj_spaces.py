@@ -134,7 +134,7 @@ print(p.shape)
 print((X @ p).shape)
 
 
-vals = X @ (X @ p)
+vals = X @ (X - (X @ p)).T
 
 vals = np.diagonal(vals)
 print(vals)

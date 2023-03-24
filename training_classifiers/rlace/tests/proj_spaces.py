@@ -55,6 +55,31 @@ svm = init_classifier()
 svm.fit(X[:] @ p, y[:])
 score_projected_no_svd = svm.score(X @ p, y)
 
-print(f"Projected score (no svd): {score_projected_no_svd}")
+print(f"Projected score : {score_projected_no_svd}")
+
+
+
+svm = init_classifier()
+ot_X = X - X @ p
+
+svm.fit(ot_X, y[:])
+score_projected_OT = svm.score(ot_X, y)
+
+
+print(f"Projected score (ot): {score_projected_OT}")
+
+
+
+
+
+svm = init_classifier()
+anti_P_X = X @ pp
+
+svm.fit(anti_P_X, y[:])
+score_projected_AT = svm.score(anti_P_X, y)
+
+
+print(f"Projected score (anti P): {score_projected_AT}")
+
 
 

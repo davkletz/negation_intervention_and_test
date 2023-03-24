@@ -144,6 +144,9 @@ print(vals)
 print(vals.shape)
 signs = np.sign(vals)
 
+
+print(vals[y == 0])
+
 print(signs)
 
 signs_corr = signs < 0

@@ -145,7 +145,9 @@ print(vals.shape)
 signs = np.sign(vals)
 
 
+
 print(vals[y == 0])
+print(vals[y == 1])
 
 print(signs)
 

@@ -22,7 +22,7 @@ def model_train(model, X_train, y_train, X_val, y_val):
     loss_fn = nn.CrossEntropyLoss()  # binary cross entropy
     optimizer = optim.SGD(model.parameters(), lr=0.0001)
 
-    n_epochs = 1   # number of epochs to run
+    n_epochs = 10   # number of epochs to run
     batch_size = 8  # size of each batch
     batch_start = torch.arange(0, len(X_train), batch_size)
 

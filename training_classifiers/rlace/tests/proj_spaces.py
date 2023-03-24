@@ -6,12 +6,13 @@ import numpy as np
 from sklearn.linear_model import SGDClassifier
 from get_data import get_data
 from sklearn.metrics import confusion_matrix
-
+from random import seed
 
 EVAL_CLF_PARAMS = {"loss": "log_loss", "tol": 1e-4, "iters_no_change": 15, "alpha": 1e-4, "max_iter": 25000}
 NUM_CLFS_IN_EVAL = 1  # change to 1 for large dataset / high dimensionality
 
 
+seed(42)
 
 def get_projection(P, rank):
     D, U = np.linalg.eigh(P)
@@ -46,7 +47,7 @@ def init_classifier():
 X, y = get_data()
 
 
-svm = init_classifier()
+'''svm = init_classifier()
 
 svm.fit(X, y)
 score_original = svm.score(X, y)
@@ -119,12 +120,19 @@ print(f"confusion matrix: {a}")
 
 
 
+'''
 
 
 print('\n\n##############################\n##############################\n\n')
 
 
-a = confusion_matrix(y,  y_score_projected_no_svd)
+
+print(X.shape)
+
+print(p.shape)
+
+print((X @ p).shape)
+
 
 vals = X @ (X @ p).T
 
@@ -135,7 +143,7 @@ print(signs)
 signs_corr = signs < 0
 
 c = signs_corr.astype(int)
-
+print(c)
 
 a = confusion_matrix(y,  c)
 

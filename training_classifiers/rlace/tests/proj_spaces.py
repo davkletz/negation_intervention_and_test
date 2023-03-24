@@ -102,7 +102,7 @@ optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 X_torch, y_torch = torch.from_numpy(X).to(device), torch.from_numpy(y).to(device)
 
 
-for epoch in range(2):  # loop over the dataset multiple times
+for epoch in range(1):  # loop over the dataset multiple times
 
     running_loss = 0.0
     for i, data in enumerate(X_torch):

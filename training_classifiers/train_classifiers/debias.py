@@ -5,7 +5,7 @@ import scipy
 #from src import classifier
 
 from typing import List
-import train_classifiers.classifier
+import classifier
 from tqdm import tqdm
 import random
 import warnings

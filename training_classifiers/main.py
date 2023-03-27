@@ -27,7 +27,7 @@ print(f"Working on {device}")
 
 clf_type = sys.argv[2]
 
-INLP = False
+INLP = True
 
 if INLP:
     debias(array_neg, array_pos)

@@ -5,7 +5,7 @@ import scipy
 #from src import classifier
 
 from typing import List
-import classifier
+from train_classifiers.classifier import Classifier, SKlearnClassifier
 from tqdm import tqdm
 import random
 import warnings
@@ -103,7 +103,7 @@ def get_debiasing_projection(classifier_class,  cls_params: Dict, num_classifier
     pbar = tqdm(range(num_classifiers))
     for i in pbar:
 
-        clf = classifier.SKlearnClassifier(classifier_class(**cls_params))
+        clf = SKlearnClassifier(classifier_class(**cls_params))
         dropout_scale = 1./(1 - dropout_rate + 1e-6)
         dropout_mask = (np.random.rand(*X_train.shape) < (1-dropout_rate)).astype(float) * dropout_scale
 

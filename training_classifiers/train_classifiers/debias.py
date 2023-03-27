@@ -190,7 +190,7 @@ def debias(X, Y, num_classifiers, classifier_class, input_dim, min_accuracy = 0.
 
 
     P, rowspace_projections, Ws = get_debiasing_projection(classifier_class, params, num_classifiers, input_dim,
-                                                           is_autoregressive, min_accuracy, X, Y, X, Y, by_class=False)
+                                                           is_autoregressive, min_accuracy, X, Y, X, Y, by_class=False, steps = True)
 
     I = np.eye(P.shape[0])
     P_alternative = I - np.sum(rowspace_projections, axis=0)

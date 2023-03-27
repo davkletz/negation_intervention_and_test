@@ -40,7 +40,7 @@ INLP = True
 
 if INLP:
 
-    debias(arrays,labs, num_iters, clf, 1024)
+    debias(arrays,labs_np, num_iters, clf, 1024)
 
 else:
     rlace_proj(arrays, labs_np, device, num_iters, clf_type)

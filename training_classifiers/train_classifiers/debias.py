@@ -117,12 +117,13 @@ def get_debiasing_projection(classifier_class,  cls_params: Dict, num_classifier
             relevant_idx_train = np.ones(X_train_cp.shape[0], dtype=bool)
             relevant_idx_dev = np.ones(X_dev_cp.shape[0], dtype=bool)
 
-        print("relevant_idx_train", relevant_idx_train)
+        '''print("relevant_idx_train", relevant_idx_train)
         print(X_train_cp * dropout_mask)
         print((X_train_cp * dropout_mask)[relevant_idx_train])
         print(Y_train[relevant_idx_train])
         print(X_dev_cp[relevant_idx_dev])
         print(Y_dev[relevant_idx_dev])
+        '''
 
 
         acc = clf.train_network((X_train_cp * dropout_mask)[relevant_idx_train], Y_train[relevant_idx_train], X_dev_cp[relevant_idx_dev], Y_dev[relevant_idx_dev])

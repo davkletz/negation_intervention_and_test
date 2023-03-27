@@ -30,9 +30,20 @@ def encode_batch(current_batch, tokenizer, model, device, n_P = None):
     return predicted_tokens
 
 
-sentences = ["Jordan is a decorator who likes to sing. He really likes to <mask>.", "Jordan is a decorator who likes to sing. He really doesn't like to <mask>."]
+sentences = ["David is a chef who likes to sing. He likes to <mask>.", "David is a chef who likes to sing. He doesn't like to <mask>."]
 
 n_val  = int(sys.argv[1])
+
+clf_type = sys.argv[2]
+
+if clf_type == "sgd":
+    clf = "SGD"
+elif clf_type == "lr":
+    clf = "LogisticRegression"
+elif clf_type == "perceptron":
+    clf = "Perceptron"
+
+
 model_name = "roberta-large"
 
 tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -58,15 +69,17 @@ P_row = {}
 device  = torch.device("cpu")
 
 for n in list_n:
-    P[n] = torch.tensor(np.load(f"{path}/P_{n}.pkl")).float().to(device)
-    Ws[n] = torch.tensor(np.load(f"{path}/Ws_{n}.pkl")).float().to(device)
-    P_row[n] = torch.tensor(np.load(f"{path}/rowspace_projs_{n}.pkl")).float().to(device)
+    P[n] = torch.tensor(np.load(f"{path}/P_{clf}_{n}", allow_pickle=True)).float().to(device)
+    Ws[n] = torch.tensor(np.load(f"{path}/Ws_{clf}_{n}", allow_pickle=True)).float().to(device)
+    P_row[n] = torch.tensor(np.load(f"{path}/rowspace_projs_{clf}_{n}", allow_pickle=True)).float().to(device)
 
 
 alpha = 0
 direction = 1
 
 model_2.init_alterings(P, P_row, Ws, alpha, direction)
+
+print('KLKL')
 
 n_P = n_val
 b = encode_batch(sentences, tokenizer, model_2, "cpu", n_P = n_P)
@@ -88,7 +101,7 @@ model_2 = RobertaForMaskedLM2.from_pretrained(model_name)
 
 path = "Output"
 
-list_n = [n_val]
+'''list_n = [n_val]
 P = {}
 Ws = {}
 P_row = {}
@@ -97,10 +110,10 @@ for n in list_n:
     P[n] = torch.tensor(np.load(f"{path}/P_{n}.pkl")).float().to(device)
     Ws[n] = torch.tensor(np.load(f"{path}/Ws_{n}.pkl")).float().to(device)
     P_row[n] = torch.tensor(np.load(f"{path}/rowspace_projs_{n}.pkl")).float().to(device)
-
+'''
 
 cudastring = "cpu"
-alpha = 1
+alpha = 2
 direction = 1
 
 model_2.init_alterings(P,P_row,  Ws, alpha, direction, )
@@ -124,7 +137,7 @@ model_2 = RobertaForMaskedLM2.from_pretrained(model_name)
 
 path = "Output"
 
-list_n = [n_val]
+'''list_n = [n_val]
 P = {}
 Ws = {}
 P_row = {}
@@ -133,7 +146,7 @@ for n in list_n:
     P[n] = torch.tensor(np.load(f"{path}/P_{n}.pkl")).float().to(device)
     Ws[n] = torch.tensor(np.load(f"{path}/Ws_{n}.pkl")).float().to(device)
     P_row[n] = torch.tensor(np.load(f"{path}/rowspace_projs_{n}.pkl")).float().to(device)
-
+'''
 
 cudastring = "cpu"
 

@@ -105,12 +105,14 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
     _keys_to_ignore_on_load_unexpected = [r"pooler"]
 
 
-    def init_alterings(self, P,P_rowspaces, Ws, alpha, direction, ):
+    def init_alterings(self, P,P_rowspaces, Ws, alpha, direction ):
         self.P = P
         self.Ws = Ws
         self.alpha = alpha
         self.direction = direction
         self.P_rowspaces = P_rowspaces
+
+
 
 
 
@@ -133,15 +135,16 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
         self.P_rowspaces = None
         self.alpha = None
         self.direction = None
+        self.used_device = None
 
 
-    def get_rowspace_projection(self, W: torch.Tensor) -> torch.Tensor:
+    def get_rowspace_projection(self, current_W: torch.Tensor) -> torch.Tensor:
         """
         :param W: the matrix over its nullspace to project
         :return: the projection matrix over the rowspace
         """
 
-        current_W = W.cpu()
+        #current_W = W.cpu()
         if np.allclose(current_W, 0):
             w_basis = torch.zeros_like(current_W.T)
         else:
@@ -154,17 +157,123 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
     def get_output_embeddings(self):
         return self.lm_head.decoder
 
+    def get_projection_to_intersection_of_nullspaces(self, rowspace_projection_matrices, input_dim: int):
+        print(len(rowspace_projection_matrices))
+        I = np.eye(input_dim)
+        Q = np.sum(rowspace_projection_matrices, axis=0)
+        P = I - self.get_rowspace_projection(Q)
+
+        return P
+
+
+    def get_all_steps(self, representations_to_alter, n_P):
+        list_rpz_neutralizing = []
+        list_h_t = []
+
+        for i, representation in enumerate(representations_to_alter):
+
+            current_list_h_t = [representation]
+            #list_h_t_bar.append(representations_to_alter)
+            rpz_neutralizing = torch.clone(representation)
+            rowspace_projections = []
+            for i in range(n_P):
+                W = self.Ws[n_P][i]
+                P_rowspace_wi = self.get_rowspace_projection(W)  # projection to W's rowspace
+                rowspace_projections.append(P_rowspace_wi)
+                P = self.get_projection_to_intersection_of_nullspaces(rowspace_projections, 1024)
+                rpz_neutralizing = (P.dot(rpz_neutralizing.T)).T
+                current_list_h_t.append(rpz_neutralizing)
+            list_rpz_neutralizing.append(rpz_neutralizing)
+            list_h_t.append(current_list_h_t)
+
+        return list_rpz_neutralizing, list_h_t
+
+
+
+    def compare_proj_2(self, representations_to_alter, n_P):
+        neutral, list_rpz = self.get_all_steps(representations_to_alter, n_P)
+        counter_repz = torch.zeros(representations_to_alter.shape).to(self.device)
+
+        for i, representation in enumerate(representations_to_alter):
+            list_h_t_bar = []
+            list_h_t = [representation]
+            # list_h_t_bar.append(representations_to_alter)
+            rpz_neutralizing = torch.clone(representation)
+
+            for k in range(n_P):
+                current_rowspace = self.get_rowspace_projection(self.Ws[n_P][k])
+                # currrent_rpz = rpz_neutralizing @ self.P_rowspaces[n_P][k]
+                currrent_rpz_1 = rpz_neutralizing @ current_rowspace
+
+                #P = self.get_projection_to_intersection_of_nullspaces(self.P_rowspaces[n_P][k:], 1024)
+                current_rpz_2 = list_rpz[i][k]
+                print("\n\n##########\n")
+                print(currrent_rpz_1)
+                print(current_rpz_2)
+                print(currrent_rpz_1 == current_rpz_2)
+
+    def compare_proj(self, representations_to_alter, n_P):
+
+
+        for i, representation in enumerate(representations_to_alter):
+            rowspace_projections = []
+            original_rpz = torch.clone(representation)
+
+            print(f"original_rpz :\n {original_rpz}")
+
+
+            W = self.Ws[n_P][0]
+
+            P_rowspace_wi = self.get_rowspace_projection(W)
+
+            rowspace_projections.append(P_rowspace_wi)
+
+            P = self.get_projection_to_intersection_of_nullspaces(rowspace_projections, 1024)
+
+            rpz_1 = (P.dot(original_rpz.T)).T
+            print(f"rpz_1 :\n {rpz_1}")
+
+            rpz_2 = original_rpz @ (torch.eye(1024).to(self.device) - self.P_rowspaces[n_P][0])
+            print(f"rpz_2 :\n {rpz_2}")
+
+
+            print("\n\n##########################\nSTEP 2 \n##########################\n\n")
+
+            W = self.Ws[n_P][1]
+
+            P_rowspace_wi = self.get_rowspace_projection(W)
+
+            rowspace_projections.append(P_rowspace_wi)
+
+            P = self.get_projection_to_intersection_of_nullspaces(rowspace_projections, 1024)
+
+            rpz_0 = (P.dot(original_rpz.T)).T
+            print(f"rpz_1 :\n {rpz_1}")
+
+            rpz_1 = (P.dot(original_rpz.T)).T
+            print(f"rpz_1 :\n {rpz_1}")
+
+            rpz_2 = rpz_2 @ (torch.eye(1024).to(self.device) - self.P_rowspaces[n_P][1])
+            print(f"rpz_2 :\n {rpz_2}")
+
+
+            quit()
+
+
+
 
 
     def alter_represention(self, representations_to_alter, n_P):
 
-        print(f"np : {n_P}")
-        print(f"size W : {len(self.Ws[n_P])}")
-        print(f"size row P : {len(self.P_rowspaces[n_P])}")
+        #print(f"np : {n_P}")
+        #print(f"size W : {len(self.Ws[n_P])}")
+        #print(f"size row P : {len(self.P_rowspaces[n_P])}")
 
         counter_repz = torch.zeros(representations_to_alter.shape).to(self.device)
 
         for i, representation in enumerate(representations_to_alter):
+
+            #print(f'\n\n RPZ : {i} \n\n')
 
             list_h_t_bar = []
             list_h_t = [representation]
@@ -172,12 +281,10 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
             rpz_neutralizing = torch.clone(representation)
 
             for k in range(n_P):
-                current_rowspace = self.get_rowspace_projection(self.Ws[n_P][k])
-                #currrent_rpz = rpz_neutralizing @ self.P_rowspaces[n_P][k]
+                current_rowspace = (torch.eye(1024).to(self.device) - self.P_rowspaces[n_P][k])
+
                 currrent_rpz = rpz_neutralizing @ current_rowspace
-                print(f"\n\nrpz_neutralizing : {rpz_neutralizing}")
-                print(f"row 1 : {current_rowspace}")
-                print(f"row 2 : {self.P_rowspaces[n_P][k]}")
+                #print(currrent_rpz)
 
                 list_h_t.append(currrent_rpz)
                 list_h_t_bar.append(rpz_neutralizing - currrent_rpz)
@@ -187,17 +294,13 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
 
 
             for k in range(n_P):
-                #print(f"n_P : {k}")
+
                 currrent_rpz = list_h_t_bar[-k-1]
                 rpz_neutral = list_h_t[-k-2]
-                #print(self.Ws[n_P][k].shape)
-                #print(rpz_deneutralized.shape)
                 scal = rpz_neutral @  self.Ws[n_P][-k-1].T
-                #print(scal)
                 coeff = -torch.ones(scal.shape).to(self.device)
                 coeff[torch.where(torch.sign(scal) == torch.sign(torch.tensor(self.direction)))] = 1
-                #w_proj_mat = torch.tensor(self.get_rowspace_projection(w_vect)).to(self.device)
-                #print(coeff)
+
 
                 rpz_deneutralized += self.alpha*coeff*currrent_rpz
 
@@ -299,7 +402,11 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
         #print("sequence_output", sequence_output)
         #print("sequence_output.shape", sequence_output.shape)
 
+        #self.compare_proj(sequence_output, n_P)
+
+
         sequence_output = self.alter_represention(sequence_output, n_P)
+        #quit()
 
 
         prediction_scores = self.lm_head(sequence_output)

@@ -39,7 +39,6 @@ elif clf_type == "sgd":
 INLP = True
 
 if INLP:
-
     debias(arrays,labs_np, num_iters, clf, 1024)
 
 else:

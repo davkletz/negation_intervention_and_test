@@ -11,8 +11,9 @@ import random
 import warnings
 from joblib import load, dump
 from sklearn.linear_model import SGDClassifier, Perceptron, LogisticRegression
-
+import matplotlib.pyplot as plt
 import pickle as pkl
+
 
 def get_rowspace_projection(W: np.ndarray) -> np.ndarray:
     """
@@ -67,7 +68,7 @@ def get_debiasing_projection(classifier_class,  cls_params: Dict, num_classifier
                              is_autoregressive: bool,
                              min_accuracy: float, X_train: np.ndarray, Y_train: np.ndarray, X_dev: np.ndarray,
                              Y_dev: np.ndarray, by_class=False, Y_train_main=None,
-                             Y_dev_main=None, dropout_rate = 0, steps = False, model_name = None) -> np.ndarray:
+                             Y_dev_main=None, dropout_rate = 0, steps = False, model_name = None, save = True) -> np.ndarray:
     """
     :param classifier_class: the sklearn classifier class (SVM/Perceptron etc.)
     :param cls_params: a dictionary, containing the params for the sklearn classifier
@@ -101,6 +102,7 @@ def get_debiasing_projection(classifier_class,  cls_params: Dict, num_classifier
     Ws = []
 
     pbar = tqdm(range(num_classifiers))
+    accuracies = []
     for i in pbar:
 
         clf = SKlearnClassifier(classifier_class(**cls_params))
@@ -117,17 +119,12 @@ def get_debiasing_projection(classifier_class,  cls_params: Dict, num_classifier
             relevant_idx_train = np.ones(X_train_cp.shape[0], dtype=bool)
             relevant_idx_dev = np.ones(X_dev_cp.shape[0], dtype=bool)
 
-        '''print("relevant_idx_train", relevant_idx_train)
-        print(X_train_cp * dropout_mask)
-        print((X_train_cp * dropout_mask)[relevant_idx_train])
-        print(Y_train[relevant_idx_train])
-        print(X_dev_cp[relevant_idx_dev])
-        print(Y_dev[relevant_idx_dev])
-        '''
-
 
         acc = clf.train_network((X_train_cp * dropout_mask)[relevant_idx_train], Y_train[relevant_idx_train], X_dev_cp[relevant_idx_dev], Y_dev[relevant_idx_dev])
         pbar.set_description("iteration: {}, accuracy: {}".format(i, acc))
+
+        accuracies.append(acc)
+
         if acc < min_accuracy: continue
 
         W = clf.get_weights()
@@ -145,7 +142,7 @@ def get_debiasing_projection(classifier_class,  cls_params: Dict, num_classifier
             # N(w1)∩ N(w2) ∩ ... ∩ N(wn) = N(P_R(w1) + P_R(w2) + ... + P_R(wn))
 
             P = get_projection_to_intersection_of_nullspaces(rowspace_projections, input_dim)
-            if steps:
+            if steps and save:
                 if i in [1, 5, 15, 20, 35]:
                     #abs_path = "/home/dkletz/tmp/pycharm_project_99/2022-23/Interventions/test_with_negation/outputs"
                     abs_path = "/data/dkletz/Experiences/negation_intervention_and_test/Output"
@@ -174,7 +171,7 @@ def get_debiasing_projection(classifier_class,  cls_params: Dict, num_classifier
 
     P = get_projection_to_intersection_of_nullspaces(rowspace_projections, input_dim)
 
-    return P, rowspace_projections, Ws
+    return P, rowspace_projections, Ws, accuracies
 
 
 
@@ -183,15 +180,24 @@ def debias(X, Y, num_classifiers, classifier_class, input_dim, min_accuracy = 0.
     is_autoregressive = True
     if classifier_class == LogisticRegression:
         params = None
+        model_name = "LogisticRegression"
     elif classifier_class == Perceptron:
         params = {'warm_start': True, 'n_jobs': 64, 'max_iter': 75, 'random_state': 0}
+        model_name = "Perceptron"
     elif classifier_class == SGDClassifier:
-        params = {'warm_start': True, 'loss': 'log', 'n_jobs': 64, 'max_iter': 75, 'random_state': 0}
+        params = {'warm_start': True, 'loss': 'log_loss', 'n_jobs': 64, 'max_iter': 75, 'random_state': 0}
+        model_name = "SGD"
 
 
 
-    P, rowspace_projections, Ws = get_debiasing_projection(classifier_class, params, num_classifiers, input_dim,
-                                                           is_autoregressive, min_accuracy, X, Y, X, Y, by_class=False, steps = True)
+    P, rowspace_projections, Ws, accuracies = get_debiasing_projection(classifier_class, params, num_classifiers, input_dim,
+                                                           is_autoregressive, min_accuracy, X, Y, X, Y, by_class=False, steps = True, model_name = model_name, save = False)
+
+    plt.plot(accuracies, label='Roberta-large')
+    plt.xlabel("Iteration")
+    plt.ylabel("Accuracy")
+    plt.legend()
+    plt.savefig("accur_according_to_iterations.pdf", dpi=400)
 
     I = np.eye(P.shape[0])
     P_alternative = I - np.sum(rowspace_projections, axis=0)

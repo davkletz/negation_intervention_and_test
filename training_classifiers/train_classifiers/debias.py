@@ -147,7 +147,8 @@ def get_debiasing_projection(classifier_class,  cls_params: Dict, num_classifier
             P = get_projection_to_intersection_of_nullspaces(rowspace_projections, input_dim)
             if steps:
                 if i in [1, 5, 15, 20, 35]:
-                    abs_path = "/home/dkletz/tmp/pycharm_project_99/2022-23/Interventions/test_with_negation/outputs"
+                    #abs_path = "/home/dkletz/tmp/pycharm_project_99/2022-23/Interventions/test_with_negation/outputs"
+                    abs_path = "/data/dkletz/Experiences/negation_intervention_and_test/Output"
 
                     #dump(P, f"{abs_path}/neg_proj_matrix_{model_name}_{i}")
                     #dump(Ws, f"{abs_path}/neg_log_reg_hyperplans_{model_name}_{i}")

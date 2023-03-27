@@ -10,6 +10,7 @@ def encode_batch(current_batch, tokenizer, model, device, n_P = None):
 
     with torch.no_grad():
         encoded_sentence = tokenizer.batch_encode_plus(current_batch,padding=True,  return_tensors="pt").to(device)
+        print(encoded_sentence['input_ids'].shape)
 
         mask_tokens_index = torch.where(encoded_sentence['input_ids'] == tokenizer.mask_token_id)
 
@@ -29,7 +30,7 @@ def encode_batch(current_batch, tokenizer, model, device, n_P = None):
     return predicted_tokens
 
 
-sentences = ["Jordan is a decorator who likes to burn. He isn't happy to <mask>", "Jordan is a decorator who likes to burn. He isn't happy to <mask>"]
+sentences = ["Jordan is a decorator who likes to sing. He really likes to <mask>.", "Jordan is a decorator who likes to sing. He really doesn't like to <mask>."]
 
 n_val  = int(sys.argv[1])
 model_name = "roberta-large"
@@ -52,18 +53,20 @@ path = "Output"
 list_n = [n_val]
 P = {}
 Ws = {}
+P_row = {}
 
 device  = torch.device("cpu")
 
 for n in list_n:
     P[n] = torch.tensor(np.load(f"{path}/P_{n}.pkl")).float().to(device)
     Ws[n] = torch.tensor(np.load(f"{path}/Ws_{n}.pkl")).float().to(device)
+    P_row[n] = torch.tensor(np.load(f"{path}/rowspace_projs_{n}.pkl")).float().to(device)
 
 
 alpha = 0
 direction = 1
 
-model_2.init_alterings(P, Ws, alpha, direction)
+model_2.init_alterings(P, P_row, Ws, alpha, direction)
 
 n_P = n_val
 b = encode_batch(sentences, tokenizer, model_2, "cpu", n_P = n_P)
@@ -88,18 +91,19 @@ path = "Output"
 list_n = [n_val]
 P = {}
 Ws = {}
+P_row = {}
 
 for n in list_n:
     P[n] = torch.tensor(np.load(f"{path}/P_{n}.pkl")).float().to(device)
     Ws[n] = torch.tensor(np.load(f"{path}/Ws_{n}.pkl")).float().to(device)
-
+    P_row[n] = torch.tensor(np.load(f"{path}/rowspace_projs_{n}.pkl")).float().to(device)
 
 
 cudastring = "cpu"
-alpha = 3
+alpha = 1
 direction = 1
 
-model_2.init_alterings(P, Ws, alpha, direction)
+model_2.init_alterings(P,P_row,  Ws, alpha, direction, )
 
 n_P = n_val
 b = encode_batch(sentences, tokenizer, model_2, "cpu", n_P = n_P)
@@ -123,17 +127,19 @@ path = "Output"
 list_n = [n_val]
 P = {}
 Ws = {}
+P_row = {}
 
 for n in list_n:
     P[n] = torch.tensor(np.load(f"{path}/P_{n}.pkl")).float().to(device)
     Ws[n] = torch.tensor(np.load(f"{path}/Ws_{n}.pkl")).float().to(device)
+    P_row[n] = torch.tensor(np.load(f"{path}/rowspace_projs_{n}.pkl")).float().to(device)
 
 
 cudastring = "cpu"
 
 direction = -1
 
-model_2.init_alterings(P, Ws, alpha, direction)
+model_2.init_alterings(P, P_row, Ws, alpha, direction)
 
 n_P = n_val
 b = encode_batch(sentences, tokenizer, model_2, "cpu", n_P = n_P)

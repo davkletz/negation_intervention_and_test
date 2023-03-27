@@ -11,7 +11,7 @@ import random
 import warnings
 from joblib import load, dump
 from sklearn.linear_model import SGDClassifier, Perceptron, LogisticRegression
-
+import pickle as pkl
 
 def get_rowspace_projection(W: np.ndarray) -> np.ndarray:
     """
@@ -136,16 +136,23 @@ def get_debiasing_projection(classifier_class,  cls_params: Dict, num_classifier
 
             P = get_projection_to_intersection_of_nullspaces(rowspace_projections, input_dim)
             if steps:
-                if i in [1, 5, 15, 20]:
+                if i in [1, 5, 15, 20, 35]:
                     abs_path = "/home/dkletz/tmp/pycharm_project_99/2022-23/Interventions/test_with_negation/outputs"
 
-                    dump(P, f"{abs_path}/neg_proj_matrix_{model_name}_{i}")
-                    dump(Ws, f"{abs_path}/neg_log_reg_hyperplans_{model_name}_{i}")
+                    #dump(P, f"{abs_path}/neg_proj_matrix_{model_name}_{i}")
+                    #dump(Ws, f"{abs_path}/neg_log_reg_hyperplans_{model_name}_{i}")
+                    output = open(f"{abs_path}/neg_proj_matrix_{model_name}_{i}", 'wb')
+                    pkl.dump(P, output)
+                    output = open(f"{abs_path}/neg_log_reg_hyperplans_{model_name}_{i}", 'wb')
+                    pkl.dump(Ws, output)
+                    output = open(f"{abs_path}/neg_row_spaces_{model_name}_{i}", 'wb')
+                    pkl.dump(rowspace_projections, output)
 
             # project
 
             X_train_cp = (P.dot(X_train.T)).T
             X_dev_cp = (P.dot(X_dev.T)).T
+
 
     """
     calculae final projection matrix P=PnPn-1....P2P1

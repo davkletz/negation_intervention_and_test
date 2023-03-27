@@ -11,6 +11,7 @@ import random
 import warnings
 from joblib import load, dump
 from sklearn.linear_model import SGDClassifier, Perceptron, LogisticRegression
+
 import pickle as pkl
 
 def get_rowspace_projection(W: np.ndarray) -> np.ndarray:
@@ -170,8 +171,16 @@ def get_debiasing_projection(classifier_class,  cls_params: Dict, num_classifier
 def debias(X, Y, num_classifiers, classifier_class, input_dim, min_accuracy = 0.0):
 
     is_autoregressive = True
+    if classifier_class == LogisticRegression:
+        params = None
+    elif classifier_class == Perceptron:
+        params = {'warm_start': True, 'n_jobs': 64, 'max_iter': 75, 'random_state': 0}
+    elif classifier_class == SGDClassifier:
+        params = {'warm_start': True, 'loss': 'log', 'n_jobs': 64, 'max_iter': 75, 'random_state': 0}
 
-    P, rowspace_projections, Ws = get_debiasing_projection(classifier_class, {}, num_classifiers, input_dim,
+
+
+    P, rowspace_projections, Ws = get_debiasing_projection(classifier_class, params, num_classifiers, input_dim,
                                                            is_autoregressive, min_accuracy, X, Y, X, Y, by_class=False)
 
     I = np.eye(P.shape[0])

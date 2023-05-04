@@ -209,6 +209,8 @@ def get_sentences(path: str, tokenizer):
 
 
         phrase_tree = phrase.to_tree()
+        print("LLLL2")
+        print(phrase_tree)
 
         if 'lemma' not in phrase_tree.token.keys() or 'id' not in phrase_tree.token.keys():
             continue

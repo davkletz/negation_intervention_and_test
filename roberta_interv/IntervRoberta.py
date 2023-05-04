@@ -114,9 +114,6 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
 
 
 
-
-
-
     def __init__(self, config):
         super().__init__(config)
 
@@ -279,6 +276,7 @@ class RobertaForMaskedLM2(RobertaPreTrainedModel):
             list_h_t = [representation]
             #list_h_t_bar.append(representations_to_alter)
             rpz_neutralizing = torch.clone(representation)
+
 
             for k in range(n_P):
                 current_rowspace = (torch.eye(1024).to(self.device) - self.P_rowspaces[n_P][k])

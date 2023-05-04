@@ -247,6 +247,9 @@ def get_sentences(path: str, tokenizer):
         # current_verbs are now filled
         for index in negation_found:
             lemma = phrase[index - 1]['lemma']
+            print('LLL3')
+            print(phrase)
+            print(lemma)
 
             start, end = token_mapping[index - 1]  # localizing the verb in the RoBERTa tokenization
 
@@ -256,7 +259,7 @@ def get_sentences(path: str, tokenizer):
                 continue
 
 
-            verb_to_add = verb_to_add.detach().cpu()
+            #verb_to_add = verb_to_add.detach().cpu()
 
 
             if tot_neg >= nb_verbs and tot_pos >= nb_verbs:

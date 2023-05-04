@@ -311,24 +311,16 @@ with torch.no_grad():
 
         dependency_trees = f"{abs_path}/parsed/parsed{first_page}.conll"  # the file with parsed phrases
 
-        num_phrases, num_complex_phrases, num_negations, num_negations_in_dependent_clauses, discarded =\
-            get_sentences(dependency_trees, tokenizer)
+        list_sentences_with_neg, list_sentences_without_neg = get_sentences(dependency_trees, tokenizer)
+
+        print(list_sentences_with_neg)
+        print(list_sentences_without_neg)
 
 
-        print(f"Total phrases: {total_phrases}")
-        print(f"total_negations: {total_negations}")
-
-        total_phrases += num_phrases
-        total_complex_phrases += num_complex_phrases
-        total_negations += num_negations
-        total_negations_in_dependent_clauses += num_negations_in_dependent_clauses
-        total_discarded += discarded
 
         first_page += 10000
 
 
-    torch.save(embeddings, f"embeddings/embeddings_{first_page}_{nb_verbs}")
-
-
+   
 
 

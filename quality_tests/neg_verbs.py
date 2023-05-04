@@ -103,7 +103,10 @@ def get_sentences(path: str, tokenizer):
     # jump below the function definition
 
 
-    list_sentences = []
+    list_sentences_with_neg = []
+    list_sentences_without_neg = []
+
+
     def depth_search(root, current_verb: str, current_index: int, in_clause: bool, n: int = 1) -> dict:
         """Input:
         - root: the (sub)tree in which we are looking for negation
@@ -200,8 +203,6 @@ def get_sentences(path: str, tokenizer):
 
 
     for phrase in dep_trees:
-        print("LLLL")
-        print(phrase)
         num_ph += 1
         if num_ph % 1000 == 0:
             print(f"{num_ph} at {datetime.now().strftime('%H:%M:%S')}, nb_neg : {tot_neg}, tot_pos : {tot_pos }")
@@ -209,8 +210,7 @@ def get_sentences(path: str, tokenizer):
 
 
         phrase_tree = phrase.to_tree()
-        print("LLLL2")
-        print(phrase_tree)
+
 
         if 'lemma' not in phrase_tree.token.keys() or 'id' not in phrase_tree.token.keys():
             continue
@@ -245,13 +245,11 @@ def get_sentences(path: str, tokenizer):
             continue
 
         # current_verbs are now filled
-        for index in negation_found:
-            lemma = phrase[index - 1]['lemma']
-            print('LLL3')
-            print(phrase)
-            print(lemma)
+        for index_found in negation_found:
+            lemma = phrase[index_found - 1]['lemma']
 
-            start, end = token_mapping[index - 1]  # localizing the verb in the RoBERTa tokenization
+
+            start, end = token_mapping[index_found - 1]  # localizing the verb in the RoBERTa tokenization
 
             # because the encodings are truncated to 512!
             if start >= 512 or end >= 512:
@@ -263,29 +261,22 @@ def get_sentences(path: str, tokenizer):
 
 
             if tot_neg >= nb_verbs and tot_pos >= nb_verbs:
-                return list_sentences
+                return list_sentences_with_neg
 
-            if negation_found[index][1] == 0:
+            if negation_found[index_found][1] == 0:
                 if random.random()<0.99:
                     continue
 
 
-
-
-            if negation_found[index][1] == 0:  # negation wasn't found for the verb at position index
+            if negation_found[index_found][1] == 0:  # negation wasn't found for the verb at position index
                 tot_neg += 1
-                if lemma not in verb_embs:
-                    verb_embs[lemma] = [[], [verb_to_add]]
-                else:
-                    verb_embs[lemma][1].append(verb_to_add)
-            elif negation_found[index][1] >= negation_found[index][0]:  # the number of negations is
+                list_sentences_with_neg.append([phrase, index_found, start, end])
+
+            elif negation_found[index_found][1] >= negation_found[index_found][0]:  # the number of negations is
                 # bigger than or equal to the number of auxiliaries
                 tot_pos += 1
-                if lemma not in verb_embs:
-                    verb_embs[lemma] = [[verb_to_add], []]
-                else:
-                    verb_embs[lemma][0].append(verb_to_add)
-            else:  # then negations were found but not for every auxiliary, thus we add the tensors to both sides
+                list_sentences_without_neg.append([phrase, index_found, start, end])
+            '''else:  # then negations were found but not for every auxiliary, thus we add the tensors to both sides
                 tot_neg += 1
                 tot_pos += 1
                 if lemma not in verb_embs:
@@ -293,9 +284,10 @@ def get_sentences(path: str, tokenizer):
                 else:
                     verb_embs[lemma][0].append(verb_to_add)
                     verb_embs[lemma][1].append(verb_to_add)
+            '''
 
     # we have exited the first loop, everything we need is in verb_embs
-    return list_sentences
+    return list_sentences_with_neg, list_sentences_without_neg
 
 
 with torch.no_grad():

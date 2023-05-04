@@ -200,6 +200,7 @@ def get_sentences(path: str, tokenizer):
 
 
     for phrase in dep_trees:
+        print("LLLL")
         print(phrase)
         num_ph += 1
         if num_ph % 1000 == 0:

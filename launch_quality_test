@@ -1,1 +1,2 @@
-python quality_test.py sgd 1 1 1
+#python quality_test.py sgd 1 1 1
+python quality_test.py sgd 1 1 1 verbs

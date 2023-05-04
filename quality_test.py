@@ -1,6 +1,7 @@
 import os
 os.environ['CUDA_VISIBLE_DEVICES'] = "2"
 from quality_tests.perplexity import compute_perplexity
+from quality_tests.neg_verbs_perplexity import compute_perplexity_verbs_neg
 import torch
 import sys
 import numpy as np
@@ -8,11 +9,20 @@ from random import random, seed
 from roberta_interv.IntervRoberta import RobertaForMaskedLM2
 from transformers import AutoTokenizer
 
-
 clf_type = sys.argv[1]
 n_val = int(sys.argv[2])
 alpha = float(sys.argv[3])
 direction = int(sys.argv[4])
+
+try :
+    quality_test = sys.argv[5]
+    if quality_test in ["0", "sentences", "all"]:
+        quality_test = "sentences"
+    else:
+        quality_test = "verbs"
+
+except:
+    quality_test = "sentences"
 
 path = "Output"
 
@@ -50,8 +60,11 @@ if __name__ == "__main__":
     model_interv.init_alterings(P, P_row, Ws, alpha, direction)
     #model_interv.to(device)
 
+    if quality_test == "verbs":
+        pplx = compute_perplexity_verbs_neg(model_interv, tokenizer, n_P = n_val)
 
-    pplx = compute_perplexity(model_interv, tokenizer, n_P = n_val)
+    else:
+        pplx = compute_perplexity(model_interv, tokenizer, n_P = n_val)
 
 
     print(f"Perplexity: {pplx}")

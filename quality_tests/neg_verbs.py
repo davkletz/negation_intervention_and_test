@@ -302,19 +302,25 @@ with torch.no_grad():
     total_phrases, total_complex_phrases, total_negations, total_negations_in_dependent_clauses, total_discarded = 0, 0, 0, 0, 0
 
     first_page = 0
-
+    all_sentences_with_neg = []
+    all_sentences_without_neg = []
 
     while total_negations< nb_verbs :
 
         dependency_trees = f"{abs_path}/parsed/parsed{first_page}.conll"  # the file with parsed phrases
 
         list_sentences_with_neg, list_sentences_without_neg = get_sentences(dependency_trees, tokenizer)
+        all_sentences_with_neg.extend(list_sentences_with_neg)
+        all_sentences_without_neg.extend(list_sentences_without_neg)
 
         #print(list_sentences_with_neg)
         #print(list_sentences_without_neg)
 
-        dump(list_sentences_with_neg, open(f"/data/dkletz/data/sentences_neg_annot/sentences_with_neg{first_page}.pkl", "wb"))
-        dump(list_sentences_without_neg, open(f"/data/dkletz/data/sentences_neg_annot/sentences_without_neg{first_page}.pkl", "wb"))
+        dump(all_sentences_with_neg, open(f"/data/dkletz/data/sentences_neg_annot/sentences_with_neg{first_page}.pkl", "wb"))
+        dump(all_sentences_without_neg, open(f"/data/dkletz/data/sentences_neg_annot/sentences_without_neg{first_page}.pkl", "wb"))
+
+        total_negations += len(list_sentences_without_neg)
+
 
 
 

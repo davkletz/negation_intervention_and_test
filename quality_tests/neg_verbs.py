@@ -261,7 +261,7 @@ def get_sentences(path: str, tokenizer):
 
 
             if tot_neg >= nb_verbs and tot_pos >= nb_verbs:
-                return list_sentences_with_neg
+                return list_sentences_with_neg, list_sentences_without_neg
 
             if negation_found[index_found][1] == 0:
                 if random.random()<0.99:
@@ -321,6 +321,6 @@ with torch.no_grad():
         first_page += 10000
 
 
-   
+
 
 

@@ -10,14 +10,11 @@
 import os
 os.environ["CUDA_VISIBLE_DEVICES"] = "1"
 import sys
-import spacy_conll
-import spacy_stanza
-import torch
 from transformers import AutoModel, AutoTokenizer
 import torch
 from datetime import datetime
-
 import random
+from joblib import dump
 
 device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
 rec_depth = sys.getrecursionlimit()
@@ -313,8 +310,11 @@ with torch.no_grad():
 
         list_sentences_with_neg, list_sentences_without_neg = get_sentences(dependency_trees, tokenizer)
 
-        print(list_sentences_with_neg)
-        print(list_sentences_without_neg)
+        #print(list_sentences_with_neg)
+        #print(list_sentences_without_neg)
+
+        dump(list_sentences_with_neg, open(f"/data/dkletz/data/sentences_neg_annot/sentences_with_neg{first_page}.pkl", "wb"))
+        dump(list_sentences_without_neg, open(f"/data/dkletz/data/sentences_neg_annot/sentences_without_neg{first_page}.pkl", "wb"))
 
 
 

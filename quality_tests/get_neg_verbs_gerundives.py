@@ -243,9 +243,9 @@ def get_sentences(path: str, tokenizer, gerundives):
 
         # current_verbs are now filled
         for index_found in negation_found:
-            print(phrase[index_found - 1])
+            #print(phrase[index_found - 1])
             lemma = phrase[index_found - 1]['lemma']
-            word = phrase[index_found - 1]['word']
+            word = phrase[index_found - 1]
 
             if word not in gerundives:
 

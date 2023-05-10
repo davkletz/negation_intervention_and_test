@@ -245,11 +245,11 @@ def get_sentences(path: str, tokenizer, gerundives):
         for index_found in negation_found:
             #print(phrase[index_found - 1])
             lemma = phrase[index_found - 1]['lemma']
-            word = phrase[index_found - 1]
+            word = phrase[index_found - 1]['form']
 
-            print(type(word))
-            print(word.keys())
-            print(word[-3:] == "ing")
+            #print(type(word))
+            #print(word.keys())
+            #print(word[-3:] == "ing")
 
             if word not in gerundives:
                 continue

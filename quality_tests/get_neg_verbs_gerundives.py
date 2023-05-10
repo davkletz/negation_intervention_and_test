@@ -255,7 +255,8 @@ def get_sentences(path: str, tokenizer, gerundives):
                 continue
             else:
                 if lemma not in gerundives:
-                   print(f"Found gerundive {lemma} in sentence {phrase}")
+                   ppppp = 0
+                   #print(f"Found gerundive {lemma} in sentence {phrase}")
                 else:
                     if len(word)<=6:
                         if not word[-6:] == "inging":

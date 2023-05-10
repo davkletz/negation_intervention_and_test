@@ -244,11 +244,18 @@ def get_sentences(path: str, tokenizer, gerundives):
         # current_verbs are now filled
         for index_found in negation_found:
             lemma = phrase[index_found - 1]['lemma']
+            word = phrase[index_found - 1]['word']
 
-            if lemma not in gerundives:
+            if word not in gerundives:
+
                 continue
             else:
-                print(f"Found gerundive {lemma} in sentence {phrase}")
+                if lemma not in gerundives:
+                   print(f"Found gerundive {lemma} in sentence {phrase}")
+                else:
+                    if len(word)<=6:
+                        if not word[-6:] == "inging":
+                            continue
 
 
             start, end = token_mapping[index_found - 1]  # localizing the verb in the RoBERTa tokenization

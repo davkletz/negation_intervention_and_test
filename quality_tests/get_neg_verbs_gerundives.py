@@ -278,7 +278,7 @@ def get_sentences(path: str, tokenizer, gerundives):
                 return list_sentences_with_neg, list_sentences_without_neg
 
             if negation_found[index_found][1] == 0:
-                if random.random()<0.99:
+                if random.random()<0.9:
                     continue
 
 

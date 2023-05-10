@@ -246,10 +246,11 @@ def get_sentences(path: str, tokenizer, gerundives):
             #print(phrase[index_found - 1])
             lemma = phrase[index_found - 1]['lemma']
             word = phrase[index_found - 1]
+
             print(word)
+            print(word[-3:] == "ing")
 
             if word not in gerundives:
-
                 continue
             else:
                 if lemma not in gerundives:

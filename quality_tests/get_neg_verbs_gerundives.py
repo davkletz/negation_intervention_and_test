@@ -349,8 +349,8 @@ with torch.no_grad():
         #print(list_sentences_with_neg)
         #print(list_sentences_without_neg)
 
-        dump(all_sentences_with_neg, f"/data/dkletz/data/sentences_neg_annot/sentences_with_neg{first_page}.joblib")
-        dump(all_sentences_without_neg, f"/data/dkletz/data/sentences_neg_annot/sentences_without_neg{first_page}.joblib")
+        dump(all_sentences_with_neg, f"/data/dkletz/data/sentences_neg_annot_gerund/sentences_with_neg.joblib")
+        dump(all_sentences_without_neg, f"/data/dkletz/data/sentences_neg_annot_gerund/sentences_without_neg{first_page}.joblib")
         total_negations += len(list_sentences_without_neg)
 
 

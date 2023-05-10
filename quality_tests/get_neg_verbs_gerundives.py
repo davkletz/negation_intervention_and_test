@@ -278,19 +278,20 @@ def get_sentences(path: str, tokenizer, gerundives):
                 return list_sentences_with_neg, list_sentences_without_neg
 
             if negation_found[index_found][1] == 0:
-                if random.random()<0.9:
+                if random.random()<0.99:
                     continue
 
 
             if negation_found[index_found][1] == 0:  # negation wasn't found for the verb at position index
-                tot_neg += 1
+                tot_pos += 1
                 text_sent = phrase_tree.metadata['text']
                 #text_tokens = tokenizer.tokenize(text_sent)
                 list_sentences_with_neg.append([text_sent, index_found, start, end])
 
             elif negation_found[index_found][1] >= negation_found[index_found][0]:  # the number of negations is
                 # bigger than or equal to the number of auxiliaries
-                tot_pos += 1
+
+                tot_neg+= 1
                 text_sent = phrase_tree.metadata['text']
                 list_sentences_without_neg.append([text_sent, index_found, start, end])
             '''else:  # then negations were found but not for every auxiliary, thus we add the tensors to both sides

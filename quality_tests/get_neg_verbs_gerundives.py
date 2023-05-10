@@ -247,6 +247,8 @@ def get_sentences(path: str, tokenizer, gerundives):
 
             if lemma not in gerundives:
                 continue
+            else:
+                print(f"Found gerundive {lemma} in sentence {phrase}")
 
 
             start, end = token_mapping[index_found - 1]  # localizing the verb in the RoBERTa tokenization
@@ -350,7 +352,7 @@ with torch.no_grad():
         #print(list_sentences_without_neg)
 
         dump(all_sentences_with_neg, f"/data/dkletz/data/sentences_neg_annot_gerund/sentences_with_neg.joblib")
-        dump(all_sentences_without_neg, f"/data/dkletz/data/sentences_neg_annot_gerund/sentences_without_neg{first_page}.joblib")
+        dump(all_sentences_without_neg, f"/data/dkletz/data/sentences_neg_annot_gerund/sentences_without_neg.joblib")
         total_negations += len(list_sentences_without_neg)
 
 

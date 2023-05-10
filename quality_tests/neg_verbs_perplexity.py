@@ -29,7 +29,13 @@ def get_perplexity_sequence(model,tokenizer, input_texts: str, start, n_P = None
         id_hidden_token = tokens['input_ids'][n_seq][start]
 
         current_sequence['input_ids'] = torch.clone(tokens['input_ids'][n_seq][:start+1].unsqueeze(0))
-        current_sequence['input_ids'][n_seq][-1] = 103
+        if "roberta" in tokenizer.name_or_path:
+            current_sequence['input_ids'][n_seq][-1] = 50264
+        elif "bert" in tokenizer.name_or_path:
+            current_sequence['input_ids'][n_seq][-1] = 103
+
+        else:
+            raise Exception("Unknown tokenizer")
         current_sequence['attention_mask'] = tokens['attention_mask'][n_seq][:start+1].unsqueeze(0)
         if "token_type_ids" in tokens:
             current_sequence['token_type_ids'] = tokens['token_type_ids'][n_seq][:start+1].unsqueeze(0)
@@ -67,8 +73,8 @@ def get_perplexity_sequence(model,tokenizer, input_texts: str, start, n_P = None
 
 
 first_page = 0
-all_sentences_with_neg = load(f"quality_tests/data/sentences_with_neg{first_page}.pkl")
-all_sentences_without_neg = load(f"quality_tests/data/sentences_without_neg{first_page}.pkl")
+all_sentences_with_neg = load(f"quality_tests/data/sentences_with_neg{first_page}.joblib")
+all_sentences_without_neg = load(f"quality_tests/data/sentences_without_neg{first_page}.joblib")
 
 
 
@@ -85,14 +91,14 @@ datasets = [all_sentences_with_neg, all_sentences_without_neg]
 
 def compute_perplexity_verbs_neg(model, tokenizer,datasets = datasets, n_P = None):
 
-    all_ppl = []
-
-    tot = 0
-    for i, c_dataset in datasets:
+    res = []
+    for i, c_dataset in enumerate(datasets):
+        tot = 0
+        all_ppl = []
         for sentence in c_dataset:
 
             #text_to_test = sentence[0].metadata['text']
-            phrase = sentence[0]
+            text_to_test = sentence[0]
             index_found = sentence[1]
             start = sentence[2]
             end = sentence[3]
@@ -101,15 +107,18 @@ def compute_perplexity_verbs_neg(model, tokenizer,datasets = datasets, n_P = Non
             a = get_perplexity_sequence(model, tokenizer, text_to_test,  start, n_P)
             all_ppl.append(a)
 
-            if tot% 100 == 0:
+            '''if tot% 100 == 0:
                 print("\n\n")
                 print(tot)
                 print(sum(all_ppl) / len(all_ppl))
+            '''
 
             tot += 1
 
-        print(f"Dataset {ds[i]} : ")
-        print(sum(all_ppl)/len(all_ppl))
+        #print(f"Dataset {ds[i]} : ")
+        res.append(sum(all_ppl)/len(all_ppl))
+
+    return res
 
 
 

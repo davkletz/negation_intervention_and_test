@@ -7,7 +7,8 @@ import sys
 import numpy as np
 from random import random, seed
 from roberta_interv.IntervRoberta import RobertaForMaskedLM2
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForMaskedLM
+
 
 clf_type = sys.argv[1]
 n_val = int(sys.argv[2])
@@ -51,13 +52,17 @@ if __name__ == "__main__":
 
     seed(42)
     model_name = "InterRoberta"
-
+    #model_name = "roberta-large"
+    if model_name == "InterRoberta":
+        model_interv = RobertaForMaskedLM2.from_pretrained("roberta-large")
+        model_interv.init_alterings(P, P_row, Ws, alpha, direction)
+    else:
+        model_interv = AutoModelForMaskedLM.from_pretrained("roberta-large")
+        n_val = None
 
     tokenizer = AutoTokenizer.from_pretrained("roberta-large")
 
 
-    model_interv = RobertaForMaskedLM2.from_pretrained("roberta-large")
-    model_interv.init_alterings(P, P_row, Ws, alpha, direction)
     #model_interv.to(device)
 
     if quality_test == "verbs":
@@ -67,4 +72,7 @@ if __name__ == "__main__":
         pplx = compute_perplexity(model_interv, tokenizer, n_P = n_val)
 
 
-    print(f"Perplexity: {pplx}")
+    #print(f"\nn: {n_val}, alpha: {alpha}, direction: {direction}")
+    #print(f"Perplexity: {pplx}")
+
+    print(f"\n {n_val} &  {alpha} & direction: {direction} & {round(pplx[0]*100)/100} & {round(pplx[1]*100)/100} ")

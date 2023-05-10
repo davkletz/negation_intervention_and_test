@@ -1,2 +1,16 @@
 #python quality_test.py sgd 1 1 1
-python quality_test.py sgd 1 1 1 verbs
+#python quality_test.py sgd 1 1 1 verbs
+
+
+
+for n_val in 1 5 15 20 35
+do
+    for alpha in 1 1.5 2 5
+    do
+        for direction in 1 -1
+        do
+            python quality_test.py sgd $n_val $alpha $direction verbs
+        done
+
+    done
+done

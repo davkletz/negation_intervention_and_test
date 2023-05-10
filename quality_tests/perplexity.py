@@ -114,14 +114,14 @@ def compute_perplexity(model, tokenizer, n_P = None):
         a = get_perplexity_sequence(model, tokenizer, text_to_test, n_P)
         all_ppl.append(a)
 
-        if tot% 100 == 0:
+        '''if tot% 100 == 0:
             print("\n\n")
             print(tot)
             print(sum(all_ppl) / len(all_ppl))
-
+    '''
         tot += 1
 
-    print(sum(all_ppl)/len(all_ppl))
+    return sum(all_ppl)/len(all_ppl)
 
 
 
